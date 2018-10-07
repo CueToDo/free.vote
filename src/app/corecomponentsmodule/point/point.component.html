@@ -28,19 +28,19 @@
 
                     <ng-container *ngIf="signedIn">
                         <!-- https://getbootstrap.com/docs/4.1/components/tooltips/ -->
-                        <div class="circle wow" [ngClass]="point.WoWVote? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom" title="WoW vote"
+                        <div class="circle wow" [ngClass]="point.PointFeedback.WoWVote? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom" title="WoW vote"
                             (click)="WoW()">w</div>
-                        <div class="circle support" [ngClass]="point.SupportLevelID==1? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
+                        <div class="circle support" [ngClass]="point.PointFeedback.SupportLevelID==1? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
                             title="support" (click)="Support()">+</div>
-                        <div class="circle neutral" [ngClass]="point.SupportLevelID==-8? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
+                        <div class="circle neutral" [ngClass]="point.PointFeedback.SupportLevelID==-8? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
                             title="neutral" (click)="Neutral()">~</div>
-                        <div class="circle oppose" [ngClass]="point.SupportLevelID==-1? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
+                        <div class="circle oppose" [ngClass]="point.PointFeedback.SupportLevelID==-1? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
                             title="oppose" (click)="Oppose()">--</div>
-                        <div class="circle report" [ngClass]="point.SupportLevelID==-9? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
+                        <div class="circle report" [ngClass]="point.PointFeedback.SupportLevelID==-9? 'chosen' : ''" data-toggle="tooltip" data-placement="bottom"
                             title="report" (click)="Report()">!</div>
                     </ng-container>
 
-                    <div [innerHtml]="point.FeedbackDate"></div>
+                    <div [innerHtml]="point.PointFeedback.FeedbackDate | nbsp"></div>
 
                 </div>
 

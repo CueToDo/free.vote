@@ -47,19 +47,21 @@ export class PointComponent implements OnInit {
     this.tags = this.point.SlashTags.filter(tag => tag !== this.router.url);
 
     this.signedIn = this.coreDataService.SignedIn();
+
+    console.log(this.point);
   }
 
   PointFeedback(pointSupportLevel: PointSupportLevels): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
 
-      if (!this.point.FeedbackIsUpdatable) {
+      if (!this.point.PointFeedback.FeedbackIsUpdatable) {
 
         alert('Feedback is not updatable');
         return reject(false);
       } else {
 
-        if (this.point.SupportLevelID === pointSupportLevel) {
+        if (this.point.PointFeedback.SupportLevelID === pointSupportLevel) {
           // If clicked on the current support level then delete it
           if (confirm('Are you sure you wish to delete your feedback?')) {
             pointSupportLevel = PointSupportLevels.None;
@@ -68,13 +70,14 @@ export class PointComponent implements OnInit {
 
         this.pointsService.PointFeedback(this.point.PointID, pointSupportLevel, '', false)
           .then(response => {
-            this.point.FeedbackDate = response;
-            this.point.SupportLevelID = pointSupportLevel;
-            console.log('ERE PointSupportlevel: ', this.point.SupportLevelID);
+            console.log('FEEDBACK API RESPONSE', response);
+            this.point.PointFeedback = response;
+            // this.point.PointFeedback.SupportLevelID = pointSupportLevel;
+            console.log('CLIENT DATA UPDATED PointSupportlevel: ', this.point.PointFeedback.SupportLevelID);
             return resolve(true); // Angular workshop - NOT Promise.resolve
           })
           .catch(serverError => {
-            console.log('PointFeedback Error');
+            console.log('PointFeedback Error', serverError);
             this.error = serverError.error.error;
             return reject(false);
           });
@@ -88,22 +91,21 @@ export class PointComponent implements OnInit {
 
     // ToDo Angular Workshop: Cannot read property 'name' of undefined
     // point.SupportLevelID was a number. Loosely typed
-    if (!this.point.WoWVote && this.point.SupportLevelID !== PointSupportLevels.Support) {
-      console.log('10-6: ', this.point.SupportLevelID);
+    if (!this.point.PointFeedback.WoWVote && this.point.PointFeedback.SupportLevelID !== PointSupportLevels.Support) {
+      console.log('10-6: ', this.point.PointFeedback.SupportLevelID);
       this.PointFeedback(PointSupportLevels.Support).then(
         success => {
-          console.log(success, 'Success PointSupportlevel: ', this.point.SupportLevelID);
+          console.log(success, 'Success PointSupportlevel: ', this.point.PointFeedback.SupportLevelID);
           this.WoW();
         },
-        fail => console.log('fail: ', fail) );
+        fail => console.log('fail: ', fail));
     } else {
       // Update WoW
       console.log('CAN now WoW');
-      this.pointsService.PointWoWVote(this.point.PointID, !this.point.WoWVote)
+      this.pointsService.PointWoWVote(this.point.PointID, !this.point.PointFeedback.WoWVote)
         .then(
-          wowDate => {
-            this.point.WoWVote = !this.point.WoWVote; // Toggle the WoW vote
-            this.point.FeedbackDate = wowDate; // Display the updated vote time
+          pointFeedback => {
+            this.point.PointFeedback = pointFeedback; // Toggle the WoW vote
           });
     }
   }
@@ -113,17 +115,17 @@ export class PointComponent implements OnInit {
   }
 
   Neutral() {
-    this.point.WoWVote = false;
+    this.point.PointFeedback.WoWVote = false;
     this.PointFeedback(PointSupportLevels.StandAside);
   }
 
   Oppose() {
-    this.point.WoWVote = false;
+    this.point.PointFeedback.WoWVote = false;
     this.PointFeedback(PointSupportLevels.Oppose);
   }
 
   Report() {
-    this.point.WoWVote = false;
+    this.point.PointFeedback.WoWVote = false;
     this.PointFeedback(PointSupportLevels.Report);
   }
 

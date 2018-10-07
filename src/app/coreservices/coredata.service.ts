@@ -91,7 +91,7 @@ export class CoreDataService {
         // http://stackoverflow.com/questions/32896407/redirect-within-component-angular-2
         // Save SignInData with JWT as cookie, not in local storage
         if (signInData.SignInStatus === SignInStatuses.SignInSuccess) {
-          Cookie.set('SignInData', JSON.stringify(signInData));
+          Cookie.set('SignInData', JSON.stringify(signInData), 90);
           success = true;
         }
 

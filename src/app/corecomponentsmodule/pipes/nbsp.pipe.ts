@@ -6,7 +6,11 @@ import { DatePipe } from '@angular/common';
 })
 export class NbspPipe implements PipeTransform {
   transform(value: string): string {
-    return value.split(' ').join('&nbsp;');
+    if (value) {
+      return value.split(' ').join('&nbsp;');
+    } else {
+      return '';
+    }
   }
 }
 

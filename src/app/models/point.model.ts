@@ -15,19 +15,20 @@ export class Point {
   Source: string;
   URL: string;
   Archived: boolean;
-  DateTimeUpdated: string;
+
+  DateTimeUpdated: string; // How many times am I going to attempt to make this a Date to use DateTime Pipe
+  // get DateTimeUpdated(): string {
+  //   return this.dateTimeUpdated;
+  // }
+  // set DateTimeUpdated(dateTimeUpdated: string) {
+
+  // }
 
   Sequence: number;
   LastRowNumber: number;
   LastRow: boolean;
 
-  FeedbackGiven: boolean;
-  FeedbackID: number;
-  SupportLevelID: PointSupportLevels;
-  Comment: string;
-  FeedbackDate: string; // Date pipe eugh!
-  FeedbackIsUpdatable: boolean;
-  WoWVote: boolean;
+  PointFeedback: PointFeedback;
 
   Attached: boolean;
 
@@ -64,8 +65,20 @@ export class PointSelectionResult {
   Points: Point[];
 }
 
+export class PointFeedback {
+  WoWWeekID: number;
+  WoWWeekEndingDate: Date; //  Does not need to be formatted
+
+  FeedbackGiven: boolean;
+  FeedbackID: number;
+  SupportLevelID: PointSupportLevels;
+  WoWVote: boolean;
+  Comment: string;
+  FeedbackDate: string; // Date pipe eugh!
+  FeedbackIsUpdatable: boolean;
+}
+
 export class WoWWeekInfoVote {
-  WeekID: number;
-  WeekEndingDate: Date; //  Does not need to be formatted
-  PointWoWDateTime: string; // damn date formatting
+  WoWWeekID: number;
+  WoWWeekEndingDate: Date; //  Does not need to be formatted
 }
