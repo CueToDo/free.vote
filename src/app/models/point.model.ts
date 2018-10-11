@@ -66,7 +66,7 @@ export class PointSelectionResult {
 }
 
 export class PointFeedback {
-  WoWWeekID: number;
+  // WoWWeekID: number; Not needed
   WoWWeekEndingDate: Date; //  Does not need to be formatted
 
   FeedbackGiven: boolean;
@@ -78,7 +78,7 @@ export class PointFeedback {
   FeedbackIsUpdatable: boolean;
 }
 
-export class WoWWeekInfoVote {
+export class WoWWeekInfoVoteNotNeeded {
   WoWWeekID: number;
   WoWWeekEndingDate: Date; //  Does not need to be formatted
 }

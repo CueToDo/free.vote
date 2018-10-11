@@ -37,6 +37,7 @@ export class HttpClientService {
     if (spaDomain === 'localhost') {
       this.website = 'free.vote';
       this.serviceUrl = 'http://localhost:56529/';
+      // this.serviceUrl = 'https://api.free.vote/';
     } else {
       this.website = spaDomain;
       this.serviceUrl = 'https://api.free.vote/';

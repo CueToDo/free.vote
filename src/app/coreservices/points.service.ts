@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { PointSelectionTypes } from '../models/enums';
 import { PointSupportLevels } from '../models/enums';
-import { PointSelectionResult, PointEdit, PointFeedback, WoWWeekInfoVote } from '../models/point.model';
+import { PointSelectionResult, PointEdit, PointFeedback } from '../models/point.model';
 
 @Injectable()
 export class PointsService {
@@ -18,31 +18,32 @@ export class PointsService {
   pages: number[];
 
   // Only get the WoWWeekInfo when voting for the first time - update after vote
-  public WoWWeekInfoVote: WoWWeekInfoVote;
+  // Never trust the client to cache API values
+  // public WoWWeekInfoVote: WoWWeekInfoVote;
 
   public Anon: boolean;
 
   constructor(private httpClientService: HttpClientService, private route: ActivatedRoute) {
     console.log('POINTS SERVICE CONSTRUCTOR');
-    this.GetWoWWeekInfoVote();
+    // this.GetWoWWeekInfoVote();
   }
 
   // Service Returns Full PointFeedback for just the WoWWeekID and WoWWeekEndingDate to be saved in WoWWeekInfoVote
-  GetWoWWeekInfoVote(): Promise<WoWWeekInfoVote> {
-    if (this.WoWWeekInfoVote) {
-      console.log('WoWWeekInfoVoteClient:', this.WoWWeekInfoVote);
-      return Promise.resolve(this.WoWWeekInfoVote);
-    } else {
-      return this.httpClientService
-        .get('points/WoWWeekInfoVote')
-        .then(result => {
-          console.log('GetWoWWeekInfoVote:', result);
-          this.WoWWeekInfoVote = result as WoWWeekInfoVote;
-          console.log('WoWWeekInfoVoteService:', this.WoWWeekInfoVote);
-          return this.WoWWeekInfoVote;
-        });
-    }
-  }
+  // GetWoWWeekInfoVote(): Promise<WoWWeekInfoVote> {
+  //   if (this.WoWWeekInfoVote) {
+  //     console.log('WoWWeekInfoVoteClient:', this.WoWWeekInfoVote);
+  //     return Promise.resolve(this.WoWWeekInfoVote);
+  //   } else {
+  //     return this.httpClientService
+  //       .get('points/WoWWeekInfoVote')
+  //       .then(result => {
+  //         console.log('GetWoWWeekInfoVote:', result);
+  //         this.WoWWeekInfoVote = result as WoWWeekInfoVote;
+  //         console.log('WoWWeekInfoVoteService:', this.WoWWeekInfoVote);
+  //         return this.WoWWeekInfoVote;
+  //       });
+  //   }
+  // }
 
   PointsTaggedMinDate(tagRoute: string, points: number): Promise<string> {
 
@@ -119,8 +120,8 @@ export class PointsService {
       .then(result => {
         console.log('PointFeedback:', result);
         const pointFeedback = result as PointFeedback;
-        this.WoWWeekInfoVote.WoWWeekID = pointFeedback.WoWWeekID; // always update regardless
-        this.WoWWeekInfoVote.WoWWeekEndingDate = pointFeedback.WoWWeekEndingDate; // always update regardless
+        // this.WoWWeekInfoVote.WoWWeekID = pointFeedback.WoWWeekID; // always update regardless
+        // this.WoWWeekInfoVote.WoWWeekEndingDate = pointFeedback.WoWWeekEndingDate; // always update regardless
         return pointFeedback;
       });
   }
@@ -130,7 +131,7 @@ export class PointsService {
 
     // standard construction of post data
     const postData = {
-      'WeekID': this.WoWWeekInfoVote.WoWWeekID, 'WeekEndingDate': this.WoWWeekInfoVote.WoWWeekEndingDate,
+      // 'WeekID': this.WoWWeekInfoVote.WoWWeekID, 'WeekEndingDate': this.WoWWeekInfoVote.WoWWeekEndingDate,
       'PointID': pointID, 'WoW': wow, 'Anon': this.Anon
     };
 
@@ -140,8 +141,8 @@ export class PointsService {
       .then(result => {
         console.log('PointWoWVote:', result);
         const pointFeedback = result as PointFeedback;
-        this.WoWWeekInfoVote.WoWWeekID = pointFeedback.WoWWeekID; // always update regardless
-        this.WoWWeekInfoVote.WoWWeekEndingDate = pointFeedback.WoWWeekEndingDate; // always update regardless
+        // this.WoWWeekInfoVote.WoWWeekID = pointFeedback.WoWWeekID; // always update regardless
+        // this.WoWWeekInfoVote.WoWWeekEndingDate = pointFeedback.WoWWeekEndingDate; // always update regardless
         return pointFeedback;
       });
 

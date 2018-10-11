@@ -91,23 +91,28 @@ export class PointComponent implements OnInit {
 
     // ToDo Angular Workshop: Cannot read property 'name' of undefined
     // point.SupportLevelID was a number. Loosely typed
-    if (!this.point.PointFeedback.WoWVote && this.point.PointFeedback.SupportLevelID !== PointSupportLevels.Support) {
-      console.log('10-6: ', this.point.PointFeedback.SupportLevelID);
-      this.PointFeedback(PointSupportLevels.Support).then(
-        success => {
-          console.log(success, 'Success PointSupportlevel: ', this.point.PointFeedback.SupportLevelID);
-          this.WoW();
-        },
-        fail => console.log('fail: ', fail));
-    } else {
-      // Update WoW
-      console.log('CAN now WoW');
-      this.pointsService.PointWoWVote(this.point.PointID, !this.point.PointFeedback.WoWVote)
-        .then(
-          pointFeedback => {
-            this.point.PointFeedback = pointFeedback; // Toggle the WoW vote
-          });
-    }
+
+    // This is the conditional first step, mandatory second step conundrum
+    // Now no recursion - allow business layer to handle
+
+    // Allow business layer to handle support if WoWing
+    // if (!this.point.PointFeedback.WoWVote && this.point.PointFeedback.SupportLevelID !== PointSupportLevels.Support) {
+    //   console.log('10-6: ', this.point.PointFeedback.SupportLevelID);
+    //   this.PointFeedback(PointSupportLevels.Support).then(
+    //     success => {
+    //       console.log(success, 'Success PointSupportlevel: ', this.point.PointFeedback.SupportLevelID);
+    //       this.WoW();
+    //     },
+    //     fail => console.log('fail: ', fail));
+    // } else {
+
+    // Update WoW
+    console.log('CAN now WoW');
+    this.pointsService.PointWoWVote(this.point.PointID, !this.point.PointFeedback.WoWVote)
+      .then(
+        pointFeedback => {
+          this.point.PointFeedback = pointFeedback; // Toggle the WoW vote
+        });
   }
 
   Support() {
