@@ -5,7 +5,6 @@ export enum ContentType {
 }
 
 export enum PointSelectionTypes {
-
   // Not used in database
 
   SlashTag = 0, // Standard slection
@@ -20,7 +19,6 @@ export enum PointSelectionTypes {
 
   TagSurvey = 7,
   CDMPProposal = 8
-
 }
 
 export enum PointSortTypes {
@@ -127,7 +125,6 @@ export const DecisionBasisOption = new Map<string, string>([
   [GroupDecisionBasisOption.SuperMajority.toString(), 'Super Majority'],
   [GroupDecisionBasisOption.Unanimous.toString(), 'Unanimous']
 ]);
-
 
 export enum IssuePhases {
   Unpublished = 0,

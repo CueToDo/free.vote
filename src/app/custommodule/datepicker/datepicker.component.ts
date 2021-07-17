@@ -6,8 +6,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./datepicker.component.css']
 })
 export class DatepickerComponent {
-
-  public dateValue = new Date() ; // bound to date input and display output
+  public dateValue = new Date(); // bound to date input and display output
   placeholder = 'Choose a date';
 
   // External Binding
@@ -28,5 +27,4 @@ export class DatepickerComponent {
   DateSelected(): void {
     this.DateChange.emit(this.dateValue);
   }
-
 }

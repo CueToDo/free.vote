@@ -1,0 +1,50 @@
+{
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "@angular-eslint/directive-selector": [
+    "error",
+    {
+      "type": "attribute",
+      "prefix": "app",
+      "style": "camelCase"
+    }
+  ],
+  "@angular-eslint/component-selector": [
+    "error",
+    {
+      "type": "element",
+      "prefix": "app",
+      "style": "kebab-case"
+    }
+  ],
+  "eqeqeq": 2,
+  "comma-dangle": "warn",
+  "indent": [
+    "error",
+    4,
+    {
+      "SwitchCase": 1
+    }
+  ],
+  "endOfLine": "auto",
+  "no-console": "warn",
+  "no-debugger": "warn",
+  "no-extra-semi": "warn",
+  "no-extra-parens": "warn",
+  "no-irregular-whitespace": "warn",
+  "no-undef": "error",
+  "semi-spacing": "warn",
+  "valid-jsdoc": [
+    2,
+    {
+      "requireReturn": false
+    }
+  ],
+  "no-array-constructor": "error",
+  "no-var": "error",
+  "prefer-const": "error",
+  "no-const-assign": "error",
+  "arrowParens": "avoid"
+}

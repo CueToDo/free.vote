@@ -1,4 +1,3 @@
-
 // Angular
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -20,7 +19,6 @@ import { PointsListComponent } from '../points-list/points-list.component';
   styleUrls: ['./question-answers.component.css']
 })
 export class QuestionAnswersComponent implements OnInit, AfterViewInit {
-
   @ViewChild('PointsList') pointsList!: PointsListComponent;
 
   public mode = 'answers'; // myPoints, newAnswer
@@ -33,12 +31,13 @@ export class QuestionAnswersComponent implements OnInit, AfterViewInit {
   constructor(
     public localData: LocalDataService,
     private activeRoute: ActivatedRoute,
-    private questionsService: QuestionsService) { }
+    private questionsService: QuestionsService
+  ) {}
 
   ngOnInit(): void {
     this.filter.pointSelectionType = PointSelectionTypes.QuestionPoints;
     this.filter.slashTag = this.activeRoute.snapshot.params.tag;
-    this.filter.questionId = this.activeRoute.snapshot.params.questionId; // Display points attached to question
+    this.filter.questionSlug = this.activeRoute.snapshot.params.questionSlug; // Display points attached to question
     this.filter.sortType = PointSortTypes.Random;
     this.filter.sortAscending = true;
   }
@@ -94,16 +93,18 @@ export class QuestionAnswersComponent implements OnInit, AfterViewInit {
   }
 
   AddRemovePointFromAnswers(add: boolean, pointID: number): void {
-
     this.error = '';
 
-    this.questionsService.QuestionPointAddRemove(add, this.filter.questionId, pointID)
-      .subscribe(
-        {
-          next: _ => this.viewMyPoints(),
-          error: err => this.error = err.error.detail
-        }
-      );
+    this.questionsService
+      .QuestionPointAddRemove(
+        this.filter.slashTag,
+        add,
+        this.filter.questionSlug,
+        pointID
+      )
+      .subscribe({
+        next: _ => this.viewMyPoints(),
+        error: err => (this.error = err.error.detail)
+      });
   }
-
 }

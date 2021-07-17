@@ -1,6 +1,5 @@
-
 // Angular
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 // Lodash https://github.com/lodash/lodash/issues/3192
 import { cloneDeep } from 'lodash-es';
@@ -13,14 +12,12 @@ import { PorQTypes } from 'src/app/models/enums';
 import { AppDataService } from 'src/app/services/app-data.service';
 import { PsandQsService } from 'src/app/services/psandqs.service';
 
-
 @Component({
   selector: 'app-porq',
   templateUrl: './porq.component.html',
   styleUrls: ['./porq.component.css']
 })
-export class PorqComponent implements OnInit {
-
+export class PorqComponent {
   @Input() public porQ = new PorQ();
   @Output() Deleted = new EventEmitter();
 
@@ -42,11 +39,7 @@ export class PorqComponent implements OnInit {
   constructor(
     private psAndQs: PsandQsService,
     private appData: AppDataService
-  ) { }
-
-  ngOnInit(): void {
-
-  }
+  ) {}
 
   edit(): void {
     this.editing = true;
@@ -62,7 +55,6 @@ export class PorqComponent implements OnInit {
   }
 
   delete(): void {
-
     // CANNOT use public property on PorQ - WHY?
     // const pq = new PorQ; // : PorQ = <PorQ>this.appData.deep(this.porQ);
     // const pq: PorQ = <PorQ>this.appData.deep(this.porQ);
@@ -71,19 +63,22 @@ export class PorqComponent implements OnInit {
     if (!this.porQ) {
       this.error = 'No persective or question selected';
     } else {
-      if (confirm(`Are you sure you wish to delete this ${this.appData.PorQType(this.porQ.porQTypeID)}?`)) {
-
+      if (
+        confirm(
+          `Are you sure you wish to delete this ${this.appData.PorQType(
+            this.porQ.porQTypeID
+          )}?`
+        )
+      ) {
         this.error = '';
 
-        this.psAndQs.PorQDelete(this.porQ.issueID, this.porQ.porQID).subscribe(
-          {
-            next: _ => {
-              this.deleted = true;
-              this.Deleted.emit();
-            },
-            error: serverError => this.error = serverError.error.detail
-          }
-        );
+        this.psAndQs.PorQDelete(this.porQ.issueID, this.porQ.porQID).subscribe({
+          next: _ => {
+            this.deleted = true;
+            this.Deleted.emit();
+          },
+          error: serverError => (this.error = serverError.error.detail)
+        });
       }
     }
   }

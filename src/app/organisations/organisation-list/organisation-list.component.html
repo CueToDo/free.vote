@@ -18,7 +18,8 @@
 <h1>Select an organisation</h1>
 
 <div *ngFor="let organisation of organisations" class="groupDiv">
-  <a [routerLink]="['/organisations', appData.kebabUri(organisation.organisationName)]">{{ organisation.organisationName }}</a>
+  <a [routerLink]="['/organisations', appData.kebabUri(organisation.organisationName)]">{{ organisation.organisationName
+    }}</a>
 </div>
 
 <div *ngIf="waiting" fxLayoutAlign="center">

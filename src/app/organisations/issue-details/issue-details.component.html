@@ -5,8 +5,9 @@
         <div class="content mt-3">
             <a [routerLink]="'/groups/membership'">List all groups</a> > <a
                 [routerLink]="['/group', appData.kebabUri(organisationName)]">{{ organisationName }}</a> > <a
-                [routerLink]="['/group', appData.kebabUri(organisationName), appData.kebabUri(groupName)]">{{ groupName }}</a>
-                > Issue
+                [routerLink]="['/group', appData.kebabUri(organisationName), appData.kebabUri(groupName)]">{{ groupName
+                }}</a>
+            > Issue
         </div>
     </div>
 
@@ -19,7 +20,8 @@
                 <!-- Issue Details. Check if we have an issue otherwise any error details are not rendered -->
                 <div *ngIf="!!issue">
 
-                    <app-issue [issue]="issue" [organisationName]="organisationName" [groupName]="groupName" [inFocus]="true"></app-issue>
+                    <app-issue [issue]="issue" [organisationName]="organisationName" [groupName]="groupName"
+                        [inFocus]="true"></app-issue>
 
                     <!-- Status -->
                     <div fxLayout="row" class="stages my-3">

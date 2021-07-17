@@ -1,6 +1,13 @@
-
 // Angular
-import { Component, OnInit, AfterViewInit, OnDestroy, EventEmitter, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  EventEmitter,
+  Output,
+  ViewChild
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 // auth0
@@ -8,8 +15,12 @@ import { LocalDataService } from '../../services/local-data.service';
 
 // Models, enums
 import {
-  PointSelectionTypes, PointTypesEnum, PointFlags, PointSortTypes,
-  PointFeedbackFilter, DraftStatusFilter
+  PointSelectionTypes,
+  PointTypesEnum,
+  PointFlags,
+  PointSortTypes,
+  PointFeedbackFilter,
+  DraftStatusFilter
 } from 'src/app/models/enums';
 
 // FreeVote Services
@@ -23,7 +34,6 @@ import { PointsListComponent } from '../points-list/points-list.component';
 import { QuestionsListComponent } from './../questions-list/questions-list.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 
-
 @Component({
   selector: 'app-points', // is router-outlet
   templateUrl: './points.component.html',
@@ -32,7 +42,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
   // for space between buttons - https://github.com/angular/material2/issues/11397
 })
 export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @Output() applyFilter = new EventEmitter<boolean>();
   @Output() pointSortTypeChanged = new EventEmitter<PointSortTypes>();
 
@@ -65,26 +74,26 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     public localData: LocalDataService,
     public appData: AppDataService
-  ) { }
-
+  ) {}
 
   ngOnInit(): void {
-
     this.filter.byAlias = this.localData.ActiveAliasForFilter;
     this.filter.questions = true; // Default first selection
 
-    this.appData.PointTypes().subscribe(
-      pointTypes => this.pointTypes = pointTypes
-    );
+    this.appData
+      .PointTypes()
+      .subscribe(pointTypes => (this.pointTypes = pointTypes));
 
-    this.widthSubject$ = this.appData.DisplayWidth$.subscribe(
-      width => { if (width === 0) { this.favouritesText = 'favs'; } else { this.favouritesText = 'favourites'; } }
-    );
-
+    this.widthSubject$ = this.appData.DisplayWidth$.subscribe(width => {
+      if (width === 0) {
+        this.favouritesText = 'favs';
+      } else {
+        this.favouritesText = 'favourites';
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-
     /* Anything that references child components pointsList or questionsList
     (inc any calls to this.Select() which invokes SelectQuestions or SelectPoints on the child components)
     inc any subscription initialisations
@@ -94,7 +103,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
     // The ActivatedRoute dies with the routed component and so
     // the subscription dies with it.
     this.activatedRoute.paramMap.subscribe(params => {
-
       let tag = false;
       let alias = false;
 
@@ -102,9 +110,15 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
       let tagParam = params.get('tag');
       let aliasParam = params.get('alias');
 
-      if (!titleParam) { titleParam = ''; }
-      if (!tagParam) { tagParam = ''; }
-      if (!aliasParam) { aliasParam = ''; }
+      if (!titleParam) {
+        titleParam = '';
+      }
+      if (!tagParam) {
+        tagParam = '';
+      }
+      if (!aliasParam) {
+        aliasParam = '';
+      }
 
       if (tagParam) {
         this.filter.anyTag = false;
@@ -116,12 +130,13 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
       if (aliasParam) {
         this.filter.pointSelectionType = PointSelectionTypes.Filtered;
         this.filter.byAlias = aliasParam;
-        if (!this.filter.slashTag) { this.filter.anyTag = true; }
+        if (!this.filter.slashTag) {
+          this.filter.anyTag = true;
+        }
         this.showFilters = true;
         this.filter.applyAliasFilter = true;
         alias = true;
       }
-
 
       if (titleParam) {
         this.filter.single = true;
@@ -140,22 +155,21 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    this.pointSelection$ = this.appData.ReSelectPoints$
-      .subscribe(
-        (pointSortType: PointSortTypes) => {
-          this.filter.slashTag = this.localData.PreviousSlashTagSelected; // Set by the Point-Edit Component
-          this.SetAppComponentTitle();
-          if (pointSortType !== PointSortTypes.NoChange) {
-            if (pointSortType === PointSortTypes.DateDescend) {
-              this.filter.sortType = PointSortTypes.DateCreated;
-              this.filter.sortAscending = false; // Ensure new point at top
-            } else {
-              this.filter.sortType = pointSortType;
-            }
+    this.pointSelection$ = this.appData.ReSelectPoints$.subscribe(
+      (pointSortType: PointSortTypes) => {
+        this.filter.slashTag = this.localData.PreviousSlashTagSelected; // Set by the Point-Edit Component
+        this.SetAppComponentTitle();
+        if (pointSortType !== PointSortTypes.NoChange) {
+          if (pointSortType === PointSortTypes.DateDescend) {
+            this.filter.sortType = PointSortTypes.DateCreated;
+            this.filter.sortAscending = false; // Ensure new point at top
+          } else {
+            this.filter.sortType = pointSortType;
           }
-          this.Select();
         }
-      );
+        this.Select();
+      }
+    );
 
     this.pointSortType$ = this.appData.PointSortType$.subscribe(
       (pointSortType: PointSortTypes) => {
@@ -178,7 +192,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Communicated from Tags Component - hide filters
     this.pointFilter$ = this.appData.PointsFiltered$.subscribe(
       (showFilters: boolean) => {
-
         this.showFilters = showFilters;
 
         if (showFilters) {
@@ -188,14 +201,18 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
           // Reapply previous filters
           this.filter.myPoints = this.filter.previouslyFilteringMyPoints;
           this.filter.applyDraftFilter = this.filter.previouslyFilteringDraft;
-          this.filter.applyAliasFilter = this.filter.previouslyFilteringByAlias
-            && !this.filter.myPoints && !!this.filter.byAlias;
-          this.filter.applyFavouritesFilter = this.filter.previouslyFilteringFavourites;
+          this.filter.applyAliasFilter =
+            this.filter.previouslyFilteringByAlias &&
+            !this.filter.myPoints &&
+            !!this.filter.byAlias;
+          this.filter.applyFavouritesFilter =
+            this.filter.previouslyFilteringFavourites;
           this.filter.anyTag = this.filter.previouslyFilteringAnyTag;
           this.filter.applyTextFilter = this.filter.previouslyFilteringByText;
           this.filter.applyTypeFilter = this.filter.previouslyFilteringByType;
           this.filter.applyDateFilter = this.filter.previouslyFilteringByDate;
-          this.filter.applyFeedbackFilter = this.filter.previouslyFilteringByFeedback;
+          this.filter.applyFeedbackFilter =
+            this.filter.previouslyFilteringByFeedback;
 
           // If there aren't any active filters, then Filtered Select is same as Tag Select
           // Only reselect points if we now have active filters
@@ -203,7 +220,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.Select();
           }
         } else {
-
           this.filter.pointSelectionType = PointSelectionTypes.SlashTag;
           this.filter.pointTypeID = PointTypesEnum.NotSelected;
 
@@ -211,12 +227,14 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.filter.previouslyFilteringMyPoints = this.filter.myPoints;
           this.filter.previouslyFilteringDraft = this.filter.applyDraftFilter;
           this.filter.previouslyFilteringByAlias = this.filter.applyAliasFilter;
-          this.filter.previouslyFilteringFavourites = this.filter.applyFavouritesFilter;
+          this.filter.previouslyFilteringFavourites =
+            this.filter.applyFavouritesFilter;
           this.filter.previouslyFilteringAnyTag = this.filter.anyTag;
           this.filter.previouslyFilteringByText = this.filter.applyTextFilter;
           this.filter.previouslyFilteringByType = this.filter.applyTypeFilter;
           this.filter.previouslyFilteringByDate = this.filter.applyDateFilter;
-          this.filter.previouslyFilteringByFeedback = this.filter.applyFeedbackFilter;
+          this.filter.previouslyFilteringByFeedback =
+            this.filter.applyFeedbackFilter;
 
           this.filter.myPoints = false;
           this.filter.applyDraftFilter = false;
@@ -237,7 +255,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.SetAppComponentTitle();
       }
-
     );
   }
 
@@ -253,13 +270,18 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
   VoterFilter(): void {
     let changeAlias = false;
 
-    if (!this.filter.byAlias) { this.filter.byAlias = ''; } // ensure compare empty with empty not nulls
-    if (!this.localData.PreviousAliasSelected) { this.localData.PreviousAliasSelected = ''; }
+    if (!this.filter.byAlias) {
+      this.filter.byAlias = '';
+    } // ensure compare empty with empty not nulls
+    if (!this.localData.PreviousAliasSelected) {
+      this.localData.PreviousAliasSelected = '';
+    }
 
     if (this.filter.applyAliasFilter) {
       this.filter.myPoints = false;
       this.localData.RestoreAliasFilter();
-      changeAlias = this.filter.byAlias !== this.localData.PreviousAliasSelected;
+      changeAlias =
+        this.filter.byAlias !== this.localData.PreviousAliasSelected;
       this.filter.byAlias = this.localData.PreviousAliasSelected; // Will always have a value whereas Active may be empty
     } else {
       // Not filtering on Alias
@@ -303,11 +325,9 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Filter by Type from Tags-Points (Select Questions)
   public FilterQuestions(filterQuestions: boolean): void {
-
     this.filter.questions = filterQuestions;
 
     this.Select();
-
   }
 
   PointTypeFilterChange(): void {
@@ -318,7 +338,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Allow mat-checkbox click event to read checked value
   // https://github.com/angular/components/issues/13156
   FilterOnDates(checkbox: MatCheckbox): void {
-
     if (checkbox.checked) {
       if (this.filter.sortType !== PointSortTypes.DateCreated) {
         this.filter.sortType = PointSortTypes.DateCreated;
@@ -344,7 +363,6 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // From ngOnInit Subscription
   FilterFavourites(filter: boolean): void {
-
     if (filter) {
       this.filter.pointFlag = PointFlags.Favourite;
     } else {
@@ -386,9 +404,7 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  SelectSpecific(): void {
-
-  }
+  SelectSpecific(): void {}
 
   ngOnDestroy(): void {
     this.pointSelection$?.unsubscribe();
@@ -397,5 +413,4 @@ export class PointsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pointFilter$?.unsubscribe();
     this.widthSubject$?.unsubscribe();
   }
-
 }

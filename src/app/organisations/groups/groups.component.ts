@@ -9,14 +9,12 @@ import { ActivatedRoute } from '@angular/router';
 // import { AppDataService } from 'src/app/services/app-data.service';
 // import { GroupsService } from 'src/app/services/groups.service';
 
-
 @Component({
   selector: 'app-groups', // Router-outlet
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css']
 })
 export class GroupsComponent implements OnInit {
-
   // Parent organisation
   organisationName = '';
   organisationID = 0;
@@ -29,14 +27,9 @@ export class GroupsComponent implements OnInit {
 
   error = '';
 
-  constructor(
-    private activeRoute: ActivatedRoute,
-    // public appData: AppDataService,
-    // private groupsService: GroupsService
-  ) { }
+  constructor(private activeRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-
     const routeParams = this.activeRoute.snapshot.params;
 
     // Parent organisation
@@ -50,7 +43,6 @@ export class GroupsComponent implements OnInit {
   }
 
   getGroups(): void {
-
     this.error = '';
 
     // this.groupsService.Groups(this.groupID).subscribe(
@@ -67,8 +59,6 @@ export class GroupsComponent implements OnInit {
   SelectGroup(): void {
     // this.groupsFiltered = this.groups.filter(group => group['groupName'] === this.groupSelected);
   }
-
-
 
   // groupUpdated() {
   //   this.getGroups();
@@ -90,11 +80,7 @@ export class GroupsComponent implements OnInit {
   // get groupID(): number {
   //   return this.groupsFiltered[0].groupID;
   // }
-
 }
-
-
-
 
 // <div fxFill fxLayout="column">
 

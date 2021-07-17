@@ -18,10 +18,14 @@ import { OrganisationEditComponent } from 'src/app/organisations/organisation-ed
   styleUrls: ['./organisations.component.css']
 })
 export class OrganisationsComponent implements OnInit, AfterViewInit {
+  @ViewChild('OrganisationMembership')
+  organisationMembership!: OrganisationListComponent;
 
-  @ViewChild('OrganisationMembership') organisationMembership!: OrganisationListComponent;
-  @ViewChild('OrganisationsAvailable') groupsAvailable!: OrganisationListComponent;
-  @ViewChild('NewGroupComponent') newGroupComponent!: OrganisationEditComponent;
+  @ViewChild('OrganisationsAvailable')
+  groupsAvailable!: OrganisationListComponent;
+
+  @ViewChild('NewGroupComponent')
+  newGroupComponent!: OrganisationEditComponent;
 
   public tabIndex = 0;
   private tabSelected = '';
@@ -30,12 +34,10 @@ export class OrganisationsComponent implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private appDataService: AppDataService) {
-
-  }
+    private appDataService: AppDataService
+  ) {}
 
   ngOnInit(): void {
-
     this.StartNewGroup(); // For GroupEdit, do this early
 
     // tab is not a route parameter, but a route segment
@@ -59,7 +61,6 @@ export class OrganisationsComponent implements OnInit, AfterViewInit {
         this.tabIndex = 2;
         break;
     }
-
   }
 
   ngAfterViewInit(): void {
@@ -69,7 +70,6 @@ export class OrganisationsComponent implements OnInit, AfterViewInit {
   }
 
   ChangeTab(tabIndex: number): void {
-
     this.tabIndex = tabIndex;
 
     switch (tabIndex) {
@@ -87,7 +87,6 @@ export class OrganisationsComponent implements OnInit, AfterViewInit {
         this.appDataService.RouteParamChange$.next('/groups/new');
         break;
     }
-
   }
 
   CancelNew(): void {

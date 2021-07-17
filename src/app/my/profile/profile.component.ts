@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpEvent, HttpEventType, HttpResponse } from '@angular/common/http';
 
 // rxjs
@@ -15,13 +15,11 @@ import { LocalDataService } from './../../services/local-data.service';
 import { HttpService } from 'src/app/services/http.service';
 import { ProfilePicture } from 'src/app/models/Image.model';
 
-
 @Component({
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css'],
+  styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit, OnDestroy {
-
+export class ProfileComponent {
   countries: Kvp[] = [];
   cities: Kvp[] = [];
 
@@ -43,12 +41,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private appDataService: AppDataService,
     public localData: LocalDataService,
     private httpService: HttpService
-  ) { }
-
-  ngOnInit(): void { }
-
-  ngOnDestroy(): void {
-  }
+  ) {}
 
   edit(): void {
     this.error = false;
@@ -62,7 +55,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   save(): void {
-
     if (this.editNewCountry) {
       // Save new text & get ID
       this.editNewCountry = false;
@@ -73,44 +65,51 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else {
       this.Saving();
       // Save selected ID
-      this.appDataService.SaveProfile(this.localData.freeVoteProfile).subscribe(
-        {
-          next:
-            result => {
-              if (result) {
-                this.updateMessage = 'saved';
+      this.appDataService
+        .SaveProfile(this.localData.freeVoteProfile)
+        .subscribe({
+          next: result => {
+            if (result) {
+              this.updateMessage = 'saved';
 
-                // Value/IDs updated now update local display text
-                this.localData.freeVoteProfile.country =
-                  this.appDataService.GetKVPKey(this.countries, parseInt(this.localData.freeVoteProfile.countryId, 10));
+              // Value/IDs updated now update local display text
+              this.localData.freeVoteProfile.country =
+                this.appDataService.GetKVPKey(
+                  this.countries,
+                  parseInt(this.localData.freeVoteProfile.countryId, 10)
+                );
 
-                this.localData.freeVoteProfile.city =
-                  this.appDataService.GetKVPKey(this.cities, parseInt(this.localData.freeVoteProfile.cityId, 10));
+              this.localData.freeVoteProfile.city =
+                this.appDataService.GetKVPKey(
+                  this.cities,
+                  parseInt(this.localData.freeVoteProfile.cityId, 10)
+                );
 
-                this.localData.SaveValues();
+              this.localData.SaveValues();
 
-                // Save in old profile
-                this.oldProfile = Object.assign({}, this.localData.freeVoteProfile);
+              // Save in old profile
+              this.oldProfile = Object.assign(
+                {},
+                this.localData.freeVoteProfile
+              );
 
-                this.Saved();
-
-              } else {
-
-                this.updateMessage = 'error';
-                this.error = true;
-                this.localData.freeVoteProfile = Object.assign({}, this.oldProfile);
-                console.log(this.localData.freeVoteProfile);
-              }
-            },
+              this.Saved();
+            } else {
+              this.updateMessage = 'error';
+              this.error = true;
+              this.localData.freeVoteProfile = Object.assign(
+                {},
+                this.oldProfile
+              );
+              console.log(this.localData.freeVoteProfile);
+            }
+          },
           error: err => this.ShowError(err)
-        }
-      );
+        });
     }
-
   }
 
   cancel(): void {
-
     this.saving = false;
     this.error = false;
     this.success = true;
@@ -123,25 +122,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.editNewCity = false;
   }
 
-
   deleteProfilePictue(): void {
-
     this.Saving();
 
-    this.httpService.profilePictureDelete().subscribe(
-      {
-        next: () => {
-          this.localData.freeVoteProfile.profilePicture = '';
-          this.localData.freeVoteProfile.profilePictureOptionID = '1';
-          this.Saved();
-        },
-        error: serverError => this.ShowError(serverError.error.detail)
-      }
-    );
+    this.httpService.profilePictureDelete().subscribe({
+      next: () => {
+        this.localData.freeVoteProfile.profilePicture = '';
+        this.localData.freeVoteProfile.profilePictureOptionID = '1';
+        this.Saved();
+      },
+      error: serverError => this.ShowError(serverError.error.detail)
+    });
   }
 
   profilePictureSelected(event: Event): void {
-
     this.Saving();
     this.uploading = true;
     this.uploadPercentDone = 0;
@@ -149,16 +143,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const files: FileList | null = (event.target as HTMLInputElement).files;
 
     if (!!files) {
-
       const picture: File = files[0] as File;
 
-      this.httpService.uploadProfilePicture(picture)
+      this.httpService
+        .uploadProfilePicture(picture)
         .pipe(
           tap((serverEvent: HttpEvent<ProfilePicture>) => {
             // tap changes nothing in the pipe. What came in goes out
             if (serverEvent !== null) {
               switch (serverEvent.type) {
-
                 case HttpEventType.Sent: // 0
                   console.log(`Uploading file of size ${picture.size}.`);
                   break;
@@ -167,15 +160,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
                   // Compute and show the % done:
                   const total = serverEvent.total;
                   if (total) {
-                    const percentDone = Math.round(100 * serverEvent.loaded / total);
+                    const percentDone = Math.round(
+                      (100 * serverEvent.loaded) / total
+                    );
                     this.uploadPercentDone = percentDone;
                     console.log(`File is ${percentDone}% uploaded.`);
                   }
                   break;
                 case HttpEventType.Response: // 4
                   console.log(`File was completely uploaded!`);
-                  console.log((serverEvent as HttpResponse<ProfilePicture>).body);
-                  const pictureUrl = (serverEvent as HttpResponse<ProfilePicture>).body?.pictureUrl;
+                  console.log(
+                    (serverEvent as HttpResponse<ProfilePicture>).body
+                  );
+                  const pictureUrl = (
+                    serverEvent as HttpResponse<ProfilePicture>
+                  ).body?.pictureUrl;
                   if (pictureUrl) {
                     this.localData.freeVoteProfile.profilePicture = pictureUrl;
                   }
@@ -188,38 +187,43 @@ export class ProfileComponent implements OnInit, OnDestroy {
               }
             }
           }),
-          filter((serverEvent: HttpEvent<ProfilePicture>) => serverEvent.type === HttpEventType.Response),
-          tap((serverEvent: HttpEvent<ProfilePicture>) => console.log(serverEvent)),
+          filter(
+            (serverEvent: HttpEvent<ProfilePicture>) =>
+              serverEvent.type === HttpEventType.Response
+          ),
+          tap((serverEvent: HttpEvent<ProfilePicture>) =>
+            console.log(serverEvent)
+          ),
           map((serverEvent: HttpEvent<ProfilePicture>) => {
-            return (serverEvent as HttpResponse<ProfilePicture>).body?.pictureUrl;
+            return (serverEvent as HttpResponse<ProfilePicture>).body
+              ?.pictureUrl;
           })
-        ).subscribe(
-          {
-            next: file => {
-              if (file) {
-                this.localData.freeVoteProfile.profilePicture = file;
-                this.localData.freeVoteProfile.profilePictureOptionID = '2';
-                this.localData.SaveValues();
-                this.Saved();
-              }
-            },
-            error: serverError => this.ShowError(serverError.error.detail)
-          }
-        );
+        )
+        .subscribe({
+          next: file => {
+            if (file) {
+              this.localData.freeVoteProfile.profilePicture = file;
+              this.localData.freeVoteProfile.profilePictureOptionID = '2';
+              this.localData.SaveValues();
+              this.Saved();
+            }
+          },
+          error: serverError => this.ShowError(serverError.error.detail)
+        });
     }
   }
 
   profilePictureOptionUpdate(): void {
-
     this.Saving();
 
-    this.appDataService.profilePictureOptionUpdate(this.localData.freeVoteProfile.profilePictureOptionID).subscribe(
-      {
+    this.appDataService
+      .profilePictureOptionUpdate(
+        this.localData.freeVoteProfile.profilePictureOptionID
+      )
+      .subscribe({
         next: () => this.Saved(),
         error: serverError => this.ShowError(serverError)
-      }
-    );
-
+      });
   }
 
   newCountry(): void {
@@ -240,31 +244,27 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   GetCountries(): void {
-    this.appDataService.GetCountries().subscribe(
-      value => {
-        this.countries = value;
-        this.GetCities(this.localData.freeVoteProfile.countryId, false);
-      }
-    );
+    this.appDataService.GetCountries().subscribe(value => {
+      this.countries = value;
+      this.GetCities(this.localData.freeVoteProfile.countryId, false);
+    });
   }
 
   GetCities(countryId: string, newCountry: boolean): void {
-    this.appDataService.GetCities(countryId).subscribe(
-      value => {
-        this.cities = value;
-        if (newCountry) {
-          this.localData.freeVoteProfile.cityId = value[0].value.toString();
-        }
+    this.appDataService.GetCities(countryId).subscribe(value => {
+      this.cities = value;
+      if (newCountry) {
+        this.localData.freeVoteProfile.cityId = value[0].value.toString();
       }
-    );
+    });
   }
 
   saveCountry(): void {
-
     this.Saving();
 
-    this.appDataService.CountrySave(this.localData.freeVoteProfile.country).subscribe(
-      {
+    this.appDataService
+      .CountrySave(this.localData.freeVoteProfile.country)
+      .subscribe({
         next: countryID => {
           this.localData.freeVoteProfile.countryId = countryID.toString();
           this.GetCountries();
@@ -272,26 +272,26 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.Saved();
         },
         error: err => this.ShowError(err)
-      }
-    );
+      });
   }
 
   saveCity(): void {
-
     this.Saving();
 
-    this.appDataService.CitySave(this.localData.freeVoteProfile.countryId,
-      this.localData.freeVoteProfile.city).subscribe(
-        {
-          next: cityID => {
-            this.localData.freeVoteProfile.cityId = cityID.toString();
-            this.GetCities(this.localData.freeVoteProfile.countryId, false);
-            this.editNewCity = false;
-            this.Saved();
-          },
-          error: err => this.ShowError(err),
-        }
-      );
+    this.appDataService
+      .CitySave(
+        this.localData.freeVoteProfile.countryId,
+        this.localData.freeVoteProfile.city
+      )
+      .subscribe({
+        next: cityID => {
+          this.localData.freeVoteProfile.cityId = cityID.toString();
+          this.GetCities(this.localData.freeVoteProfile.countryId, false);
+          this.editNewCity = false;
+          this.Saved();
+        },
+        error: err => this.ShowError(err)
+      });
   }
 
   Saving(): void {
@@ -315,7 +315,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ShowError(err: any): void {
-
     if (err.error.detail) {
       this.updateMessage = err.error.detail;
     } else if (err.error) {
@@ -325,5 +324,4 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
     this.error = true;
   }
-
 }

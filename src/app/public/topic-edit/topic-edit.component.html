@@ -4,7 +4,8 @@
     <mat-icon (click)="remove(topic)">cancel</mat-icon>
   </div>
   <input fxFlex placeholder="type new slash tag and press enter" (keydown.shift.enter)="$event.preventDefault()"
-  (keyup)="check()" (keydown.enter)="$event.preventDefault()" (keyup.enter)="add()" (blur)="add()" [(ngModel)]="newTopic" class="mx-3">
+    (keyup)="check()" (keydown.enter)="$event.preventDefault()" (keyup.enter)="add()" (blur)="add()"
+    [(ngModel)]="newTopic" class="mx-3">
 </div>
 
 <div class="alert alert-danger m-2" *ngIf="error">

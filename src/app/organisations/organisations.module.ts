@@ -44,8 +44,14 @@ const routes: Routes = [
   { path: 'new', component: OrganisationsComponent },
   { path: ':organisationName', component: OrganisationComponent },
   { path: ':organisationName/:groupName', component: GroupComponent },
-  { path: ':organisationName/:groupName/:issue', component: IssueDetailsComponent },
-  { path: ':organisationName/:groupName/:issue/:porqId', component: PorqDetailsComponent },
+  {
+    path: ':organisationName/:groupName/:issue',
+    component: IssueDetailsComponent
+  },
+  {
+    path: ':organisationName/:groupName/:issue/:porqId',
+    component: PorqDetailsComponent
+  },
   // This can't work
   { path: ':group/:tag', component: TagsPointsComponent }
 ];
@@ -82,4 +88,4 @@ const routes: Routes = [
     OrganisationsComponent
   ]
 })
-export class OrganisationsModule { }
+export class OrganisationsModule {}

@@ -1,4 +1,3 @@
-
 // Always use camelCase properties
 // https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_Serialization_CamelCasePropertyNamesContractResolver.htm
 
@@ -15,7 +14,6 @@ export class GroupIssueCounts {
 }
 
 export class IssueSelectionResult {
-
   issueCount = 0; // number of issues selected
 
   issueIDs: ID[] = [];
@@ -28,7 +26,6 @@ export class IssueSelectionResult {
 }
 
 export class Issue {
-
   // Ownership
   organisationID = 0;
   groupID = 0;
@@ -86,7 +83,6 @@ export class Issue {
 }
 
 export class IssueEdit {
-
   // Ownership
   public groupIDOwner = 0;
   public subGroupID = 0;
@@ -108,7 +104,6 @@ export class IssuePrioritisationVote {
 }
 
 export class IssuePorQCounts {
-
   questions = 0;
   perspectives = 0;
   proposals = 0;

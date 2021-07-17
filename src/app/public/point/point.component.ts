@@ -3,21 +3,23 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 // Models & enums
 import { Point, PointFeedback } from '../../models/point.model';
-import { PointSupportLevels, PointFlags, PointTypesEnum } from '../../models/enums';
+import {
+  PointSupportLevels,
+  PointFlags,
+  PointTypesEnum
+} from '../../models/enums';
 
 // Services
 import { PointsService } from '../../services/points.service';
 import { LocalDataService } from '../../services/local-data.service';
 
-
 @Component({
   selector: 'app-point',
   templateUrl: './point.component.html',
   styleUrls: ['./point.component.css'],
-  preserveWhitespaces: true,
+  preserveWhitespaces: true
 })
 export class PointComponent implements OnInit {
-
   @Input() point = new Point();
   @Input() pointCount = 0;
   @Input() isPorQPoint = false;
@@ -29,7 +31,7 @@ export class PointComponent implements OnInit {
   @Output() RemovePointFromAnswers = new EventEmitter();
 
   // bind to point slashtags (not topic)
-  slashTags: string[] = [];  // = [<Tag>{ SlashTag: '/slash' }, <Tag>{ SlashTag: '/hash' }];
+  slashTags: string[] = []; // = [<Tag>{ SlashTag: '/slash' }, <Tag>{ SlashTag: '/hash' }];
   youTubeIDs: string[] = [];
   vimeoIDs: string[] = [];
   soundCloudTrackIDs: string[] = [];
@@ -62,8 +64,7 @@ export class PointComponent implements OnInit {
     public localData: LocalDataService, // public - used in template
     private appData: AppDataService,
     private pointsService: PointsService
-  ) { }
-
+  ) {}
 
   ngOnInit(): void {
     // Angular Workshop filter is not a function
@@ -80,7 +81,6 @@ export class PointComponent implements OnInit {
 
     // this.tags = this.point.Tags.filter(x => true);
 
-
     // No subscriptions
 
     this.AssignTags();
@@ -93,7 +93,12 @@ export class PointComponent implements OnInit {
 
     this.extractMediaEmbeds();
 
-    this.linkShare = this.localData.websiteUrl + 'slash-tag' + this.localData.PreviousSlashTagSelected + '/' + this.SelectSingleTitle;
+    this.linkShare =
+      this.localData.websiteUrl +
+      'slash-tag' +
+      this.localData.PreviousSlashTagSelected +
+      '/' +
+      this.SelectSingleTitle;
   }
 
   AssignTags(): void {
@@ -102,7 +107,11 @@ export class PointComponent implements OnInit {
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-      this.slashTags = this.point.slashTags.filter(tag => tag.toLowerCase() !== this.localData.PreviousSlashTagSelected.toLowerCase());
+      this.slashTags = this.point.slashTags.filter(
+        tag =>
+          tag.toLowerCase() !==
+          this.localData.PreviousSlashTagSelected.toLowerCase()
+      );
     }
   }
 
@@ -121,13 +130,11 @@ export class PointComponent implements OnInit {
   }
 
   extractMediaEmbeds(): void {
-
     // https://ckeditor.com/docs/ckeditor5/latest/features/media-embed.html
 
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       this.youTubeIDs = [];
       if (this.point.youTubeID) {
         this.youTubeIDs.push(this.point.youTubeID);
@@ -143,7 +150,6 @@ export class PointComponent implements OnInit {
       const split = this.point.pointHTML.split('<figure class="media">');
 
       if (split.length > 0) {
-
         let i: number;
         let oembedPlus: string[];
         let url: string;
@@ -151,7 +157,6 @@ export class PointComponent implements OnInit {
         let urlParts = [];
 
         for (i = 1; i < split.length; i++) {
-
           oembedPlus = split[i].split('</figure>');
           url = oembedPlus[0].split('"')[1];
           urlParts = url.split('/');
@@ -166,7 +171,6 @@ export class PointComponent implements OnInit {
             id = urlParts[urlParts.length - 1];
             this.vimeoIDs.push(id);
           } else if (url.includes('soundcloud')) {
-
           }
           split[i] = oembedPlus[1]; // Use only what's after the figure element
         }
@@ -177,16 +181,16 @@ export class PointComponent implements OnInit {
   }
 
   PointFeedback(pointSupportLevel: PointSupportLevels): void {
-
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       if (!this.point.pointFeedback.feedbackIsUpdatable) {
         alert('Feedback is not updatable');
       } else {
-
-        if (this.point.pointFeedback.supportLevelID === pointSupportLevel && !this.point.pointFeedback.pointModified) {
+        if (
+          this.point.pointFeedback.supportLevelID === pointSupportLevel &&
+          !this.point.pointFeedback.pointModified
+        ) {
           // If clicked on the current support level then delete it
           if (confirm('Are you sure you wish to delete your feedback?')) {
             pointSupportLevel = PointSupportLevels.None;
@@ -195,14 +199,18 @@ export class PointComponent implements OnInit {
           }
         }
 
-        this.pointsService.PointFeedback(this.point.pointID, pointSupportLevel, '', false)
+        this.pointsService
+          .PointFeedback(this.point.pointID, pointSupportLevel, '', false)
           .subscribe({
             next: response => {
               console.log('FEEDBACK API RESPONSE', response);
               if (this.point) {
                 this.point.pointFeedback = response as PointFeedback;
               }
-              console.log('CLIENT DATA UPDATED PointSupportlevel: ', this.point?.pointFeedback?.supportLevelID);
+              console.log(
+                'CLIENT DATA UPDATED PointSupportlevel: ',
+                this.point?.pointFeedback?.supportLevelID
+              );
             },
             error: serverError => {
               console.log('PointFeedback Error', serverError);
@@ -213,9 +221,7 @@ export class PointComponent implements OnInit {
     }
   }
 
-  PointTypeVote(pointTypesEnum: PointTypesEnum): void {
-
-  }
+  PointTypeVote(pointTypesEnum: PointTypesEnum): void {}
 
   AddToAnswers(pointID: number): void {
     this.AddPointToAnswers.emit(pointID);
@@ -235,7 +241,6 @@ export class PointComponent implements OnInit {
   }
 
   WoW(): void {
-
     console.log('BEGIN WoW');
 
     // ToDo Angular Workshop: Cannot read property 'name' of undefined
@@ -260,14 +265,13 @@ export class PointComponent implements OnInit {
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
-      this.pointsService.PointWoWVote(this.point.pointID, !this.point.pointFeedback.woWVote)
-        .subscribe(
-          pointFeedback => {
-            if (this.point) {
-              this.point.pointFeedback = pointFeedback; // Toggle the WoW vote
-            }
-          });
+      this.pointsService
+        .PointWoWVote(this.point.pointID, !this.point.pointFeedback.woWVote)
+        .subscribe(pointFeedback => {
+          if (this.point) {
+            this.point.pointFeedback = pointFeedback; // Toggle the WoW vote
+          }
+        });
     }
   }
 
@@ -294,46 +298,39 @@ export class PointComponent implements OnInit {
     alert('ToDo');
   }
 
-
   edit(): void {
     this.editing = true;
   }
 
   delete(): void {
-
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       if (confirm('Are you sure you wish to delete this point?')) {
-        this.pointsService.PointDelete(this.point.pointID)
-          .subscribe(
-            {
-              next: _ => {
-                if (this.point) {
-                  this.PointDeleted.emit(this.point.pointID);
-                }
-              },
-              // not looking at any result <<<
-              error: serverError => {
-                this.error = serverError.error.detail;
-                console.log(this.error);
-              }
-            });
+        this.pointsService.PointDelete(this.point.pointID).subscribe({
+          next: _ => {
+            if (this.point) {
+              this.PointDeleted.emit(this.point.pointID);
+            }
+          },
+          // not looking at any result <<<
+          error: serverError => {
+            this.error = serverError.error.detail;
+            console.log(this.error);
+          }
+        });
       }
     }
   }
 
-
   favourite(): void {
-
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       const deleteFavourite = this.point.isFavourite;
 
-      this.pointsService.PointFlag(deleteFavourite, this.point.pointID, PointFlags.Favourite)
+      this.pointsService
+        .PointFlag(deleteFavourite, this.point.pointID, PointFlags.Favourite)
         .subscribe(_ => {
           if (this.point) {
             this.point.isFavourite = !deleteFavourite;
@@ -347,11 +344,9 @@ export class PointComponent implements OnInit {
   }
 
   onCompleteEdit(): void {
-
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       this.AssignTags();
       this.extractMediaEmbeds();
 
@@ -368,18 +363,17 @@ export class PointComponent implements OnInit {
   }
 
   FetchMetaData(): void {
-
     if (!this.point) {
       this.error = 'Missing: point';
     } else {
-
       // If it's a newSource, it will be showLinkPreview
       // but could be called from point update where isNew is false and showLinkPreview is true
       if (this.point.linkAddress && this.point.showLinkPreview) {
         // Get Link metadata for preview
         // Also handled in new point in tags-points component
         this.updatingPreview = true;
-        this.pointsService.PointSourceMetaDataUpdate(this.point.pointID, this.point.linkAddress)
+        this.pointsService
+          .PointSourceMetaDataUpdate(this.point.pointID, this.point.linkAddress)
           .subscribe(metaData => {
             if (this.point) {
               this.point.linkTitle = metaData.title;
@@ -393,7 +387,9 @@ export class PointComponent implements OnInit {
   }
 
   OccupyHandSignals(): void {
-    window.open('https://en.m.wikipedia.org/wiki/Occupy_movement_hand_signals', '_blank');
+    window.open(
+      'https://en.m.wikipedia.org/wiki/Occupy_movement_hand_signals',
+      '_blank'
+    );
   }
-
 }

@@ -8,14 +8,34 @@
 
                 <div class="mt-4">
                     <span *ngIf="localData.LoggedInToAuth0">
-                        <a class="clicker" (click)="viewAllAnswers()" [class.selected]="mode==='answers'">all
-                            answers</a>
-                        <a class="clicker" (click)="viewMyPoints()" [class.selected]="mode==='myPoints'">my answers
-                            only</a>
-                        <a class="clicker" (click)="addAnswer()" [class.selected]="mode==='addAnswer'">add answer</a>
-                        <a class="clicker" (click)="newAnswer()" [class.selected]="mode==='newAnswer'">new answer</a>
+
+                        <button mat-button (click)="viewAllAnswers()" [class.selected]="mode==='answers'">
+                            all answers
+                            <mat-icon>autorenew</mat-icon>
+                        </button>
+
+                        <button mat-button (click)="viewMyPoints()" [class.selected]="mode==='myPoints'">
+                            my answers only
+                            <mat-icon>face</mat-icon>
+                        </button>
+
+                        <button mat-button (click)="addAnswer()" [class.selected]="mode==='addAnswer'">
+                            add answer
+                            <mat-icon>add</mat-icon>
+                        </button>
+
+                        <button mat-button (click)="newAnswer()" [class.selected]="mode==='newAnswer'">
+                            new answer
+                            <mat-icon>create</mat-icon>
+                        </button>
+
                     </span>
-                    <a [routerLink]="tagSelected">view all questions</a>
+
+                    <button mat-button [routerLink]="tagSelected">
+                        view all questions
+                        <mat-icon>arrow_back</mat-icon>
+                    </button>
+
                 </div>
 
                 <h1 class="mt-3">{{ QuestionSelected }}</h1>
@@ -27,14 +47,16 @@
                 </div>
 
                 <div class="mt-5" *ngIf="mode==='newAnswer'">
-                    <app-point-edit (CancelEdit)="cancelEdit()" (CompleteEdit)="AddRemovePointFromAnswers(true, $event)">
+                    <app-point-edit (CancelEdit)="cancelEdit()"
+                        (CompleteEdit)="AddRemovePointFromAnswers(true, $event)">
                     </app-point-edit>
                 </div>
 
             </div>
 
-            <app-points-list [hidden]="mode==='newAnswer'" [filter]="filter" #PointsList [hidden]="filter.questions" [attachedToQuestion]="attachedToQuestion"
-                (AddPointToAnswers)="AddRemovePointFromAnswers(true, $event)" (RemovePointFromAnswers)="AddRemovePointFromAnswers(false, $event)">
+            <app-points-list [hidden]="mode==='newAnswer'" [filter]="filter" #PointsList [hidden]="filter.questions"
+                [attachedToQuestion]="attachedToQuestion" (AddPointToAnswers)="AddRemovePointFromAnswers(true, $event)"
+                (RemovePointFromAnswers)="AddRemovePointFromAnswers(false, $event)">
             </app-points-list>
 
             <div fxFlex></div>

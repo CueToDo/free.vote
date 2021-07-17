@@ -1,6 +1,5 @@
-
 // Angular
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 // Model
 import { Organisation } from 'src/app/models/organisation.model';
@@ -14,8 +13,7 @@ import { OrganisationsService } from 'src/app/services/groups.service';
   templateUrl: './organisation-list.component.html',
   styleUrls: ['./organisation-list.component.css']
 })
-export class OrganisationListComponent implements OnInit, OnDestroy {
-
+export class OrganisationListComponent {
   @Input() CurrentMembership = false;
 
   public organisations: Organisation[] = [];
@@ -28,61 +26,52 @@ export class OrganisationListComponent implements OnInit, OnDestroy {
   constructor(
     public appData: AppDataService,
     private groupsService: OrganisationsService
-  ) { }
-
-  ngOnInit(): void {
-  }
+  ) {}
 
   @Input() Refresh(): void {
-
     this.organisations = [];
     this.waiting = true;
     this.message = '';
     this.error = '';
 
     if (this.CurrentMembership) {
-      this.groupsService.OrganisationMembership(this.organisationFilter)
-        .subscribe(
-          {
-            next: groups => {
-              this.organisations = groups;
-              this.organisationCount = groups.length;
-              if (this.organisationCount === 0) {
-                if (this.organisationFilter) {
-                  this.message = 'You are not a member of any groups that match the search';
-                } else {
-                  this.message = 'You are not a member of any groups';
-                }
+      this.groupsService
+        .OrganisationMembership(this.organisationFilter)
+        .subscribe({
+          next: groups => {
+            this.organisations = groups;
+            this.organisationCount = groups.length;
+            if (this.organisationCount === 0) {
+              if (this.organisationFilter) {
+                this.message =
+                  'You are not a member of any groups that match the search';
+              } else {
+                this.message = 'You are not a member of any groups';
               }
-            },
-            error: serverError => this.error = serverError.error.detail,
-            complete: () => this.waiting = false
-          }
-        );
+            }
+          },
+          error: serverError => (this.error = serverError.error.detail),
+          complete: () => (this.waiting = false)
+        });
     } else {
-      this.groupsService.OrganisationsAvailable(this.organisationFilter)
-        .subscribe(
-          {
-            next: groups => {
-              this.organisations = groups;
-              this.organisationCount = groups.length;
-              if (this.organisationCount === 0) {
-                if (this.organisationFilter) {
-                  this.message = 'No organisations are available to join that match the search';
-                } else {
-                  this.message = 'No more organisations are available to join';
-                }
+      this.groupsService
+        .OrganisationsAvailable(this.organisationFilter)
+        .subscribe({
+          next: groups => {
+            this.organisations = groups;
+            this.organisationCount = groups.length;
+            if (this.organisationCount === 0) {
+              if (this.organisationFilter) {
+                this.message =
+                  'No organisations are available to join that match the search';
+              } else {
+                this.message = 'No more organisations are available to join';
               }
-            },
-            error: serverError => this.error = serverError.error.detail,
-            complete: () => this.waiting = false
-          }
-        );
+            }
+          },
+          error: serverError => (this.error = serverError.error.detail),
+          complete: () => (this.waiting = false)
+        });
     }
   }
-
-  ngOnDestroy(): void {
-
-  }
-
 }

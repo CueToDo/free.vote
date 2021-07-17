@@ -1,27 +1,39 @@
-
 // Angular
-import { Component, OnInit, Input, EventEmitter, Output, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Input,
+  EventEmitter,
+  Output,
+  Inject,
+  PLATFORM_ID
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 // Models, enums
 import { ID } from 'src/app/models/common';
 import { FilterCriteria } from 'src/app/models/filterCriteria.model';
-import { PagePreviewMetaData, Point, PointSelectionResult } from 'src/app/models/point.model';
-import { PointSelectionTypes, PointTypesEnum, PointSortTypes, DraftStatusFilter, PointFeedbackFilter } from 'src/app/models/enums';
+import {
+  PagePreviewMetaData,
+  Point,
+  PointSelectionResult
+} from 'src/app/models/point.model';
+import {
+  PointSelectionTypes,
+  PointTypesEnum,
+  PointSortTypes
+} from 'src/app/models/enums';
 
 // Services
 import { AppDataService } from 'src/app/services/app-data.service';
 import { LocalDataService } from 'src/app/services/local-data.service';
 import { PointsService } from 'src/app/services/points.service';
 
-
 @Component({
   selector: 'app-points-list',
   templateUrl: './points-list.component.html',
   styleUrls: ['./points-list.component.css']
 })
-export class PointsListComponent implements OnInit {
-
+export class PointsListComponent {
   @Input() public filter = new FilterCriteria();
   @Input() public attachedToQuestion = false;
 
@@ -50,26 +62,23 @@ export class PointsListComponent implements OnInit {
     if (this.points && this.points.length > 0) {
       lastRow = this.points[this.points.length - 1].rowNumber;
     }
-    if (this.points.length > lastRow) { lastRow = this.points.length; } // Defensive if point count from databsae is wrong
+    if (this.points.length > lastRow) {
+      lastRow = this.points.length;
+    } // Defensive if point count from databsae is wrong
     return lastRow;
   }
 
   public nextPagePointsCount(): number {
-    return this.IDs
-      .filter(val => val.rowNumber > this.lastPageRow)
-      .slice(0, 10).length;
+    return this.IDs.filter(val => val.rowNumber > this.lastPageRow).slice(0, 10)
+      .length;
   }
-
 
   constructor(
     public appData: AppDataService,
     public localData: LocalDataService,
     private pointsService: PointsService,
     @Inject(PLATFORM_ID) private platformId: object
-  ) { }
-
-  ngOnInit(): void {
-  }
+  ) {}
 
   OnTopicSearch(): string {
     let onTopic = '';
@@ -83,7 +92,6 @@ export class PointsListComponent implements OnInit {
   }
 
   SelectPointsByVoter(): void {
-
     this.localData.ActiveAliasForFilter = this.filter?.byAlias || '';
 
     if (this.filter?.slashTag) {
@@ -96,30 +104,30 @@ export class PointsListComponent implements OnInit {
   }
 
   SelectPoints(): void {
-
     this.possibleAnswers = false;
 
     if (!this.alreadyFetchingPointsFromDB) {
-
       this.alreadyFetchingPointsFromDB = true;
       this.pointCount = 0;
       this.points = [];
       this.error = '';
 
       switch (this.filter?.pointSelectionType) {
-
         case PointSelectionTypes.Filtered:
-
           let aliasFilter = '';
           if (this.filter.applyAliasFilter) {
             aliasFilter = this.filter.byAlias;
           }
 
           let textFilter = '';
-          if (this.filter.applyTextFilter) { textFilter = this.filter.text; }
+          if (this.filter.applyTextFilter) {
+            textFilter = this.filter.text;
+          }
 
           let pointTypeID = PointTypesEnum.NotSelected;
-          if (this.filter.applyTypeFilter) { pointTypeID = this.filter.pointTypeID; }
+          if (this.filter.applyTypeFilter) {
+            pointTypeID = this.filter.pointTypeID;
+          }
 
           let dateFrom = new Date('1 Jan 2000');
           let dateTo = new Date();
@@ -128,7 +136,12 @@ export class PointsListComponent implements OnInit {
           if (this.filter.applyDateFilter) {
             dateFrom = this.filter.dateFrom;
             dateTo = this.filter.dateTo;
-            if (this.appData.Date1IsLessThanDate2(dateTo.toString(), dateFrom.toString())) {
+            if (
+              this.appData.Date1IsLessThanDate2(
+                dateTo.toString(),
+                dateFrom.toString()
+              )
+            ) {
               const dateSwitch = dateFrom;
               dateFrom = dateTo;
               dateTo = dateSwitch;
@@ -137,37 +150,50 @@ export class PointsListComponent implements OnInit {
             }
           }
 
-          this.pointsService.GetFirstBatchFiltered(
-            this.filter.myPoints, aliasFilter, this.OnTopicSearch(),
-            this.filter.draftStatus, this.filter.feedbackFilter, this.filter.pointFlag, textFilter,
-            pointTypeID, dateFrom, dateTo,
-            this.filter.sortType, this.filter.sortAscending)
-            .subscribe(
-              {
-                next: psr => this.DisplayPoints(psr),
-                error: err => {
-                  this.error = err.error.detail;
-                  this.alreadyFetchingPointsFromDB = false;
-                }
-              });
+          this.pointsService
+            .GetFirstBatchFiltered(
+              this.filter.myPoints,
+              aliasFilter,
+              this.OnTopicSearch(),
+              this.filter.draftStatus,
+              this.filter.feedbackFilter,
+              this.filter.pointFlag,
+              textFilter,
+              pointTypeID,
+              dateFrom,
+              dateTo,
+              this.filter.sortType,
+              this.filter.sortAscending
+            )
+            .subscribe({
+              next: psr => this.DisplayPoints(psr),
+              error: err => {
+                this.error = err.error.detail;
+                this.alreadyFetchingPointsFromDB = false;
+              }
+            });
           break;
 
         case PointSelectionTypes.QuestionPoints:
-
           this.possibleAnswers = this.filter.unAttachedToQuestion;
 
-          this.pointsService.GetFirstBatchQuestionPoints(
-            this.filter.slashTag, this.filter.questionId, this.filter.myPoints,
-            this.filter.unAttachedToQuestion, this.filter.sortType, this.filter.sortAscending)
-            .subscribe(
-              {
-                next: psr => this.DisplayPoints(psr),
-                error: err => {
-                  console.log(err);
-                  this.error = err.error.detail;
-                  this.alreadyFetchingPointsFromDB = false;
-                }
-              });
+          this.pointsService
+            .GetFirstBatchQuestionPoints(
+              this.filter.slashTag,
+              this.filter.questionSlug,
+              this.filter.myPoints,
+              this.filter.unAttachedToQuestion,
+              this.filter.sortType,
+              this.filter.sortAscending
+            )
+            .subscribe({
+              next: psr => this.DisplayPoints(psr),
+              error: err => {
+                console.log(err);
+                this.error = err.error.detail;
+                this.alreadyFetchingPointsFromDB = false;
+              }
+            });
 
           break;
 
@@ -176,63 +202,58 @@ export class PointsListComponent implements OnInit {
           if (this.filter) {
             this.filter.slashTag = this.localData.PreviousSlashTagSelected; // how does this relate to getting from route param?
             if (this.filter.slashTag) {
-              this.pointsService.GetFirstBatchForTag(this.filter.slashTag, this.filter.sortType, this.filter.sortAscending)
-                .subscribe(
-                  {
-                    next: psr => this.DisplayPoints(psr),
-                    error: err => {
-                      this.error = err.error.detail;
-                      this.alreadyFetchingPointsFromDB = false;
-                    }
-                  });
+              this.pointsService
+                .GetFirstBatchForTag(
+                  this.filter.slashTag,
+                  this.filter.sortType,
+                  this.filter.sortAscending
+                )
+                .subscribe({
+                  next: psr => this.DisplayPoints(psr),
+                  error: err => {
+                    this.error = err.error.detail;
+                    this.alreadyFetchingPointsFromDB = false;
+                  }
+                });
             }
           }
           break;
       }
-
     }
   }
 
-
   public SelectSpecificPoint(slashTag: string, pointTitle: string): void {
-
     this.alreadyFetchingPointsFromDB = true;
 
-    this.pointsService.GetSpecificPoint(slashTag, pointTitle)
-      .subscribe(
-        {
-          next: psr => {
+    this.pointsService.GetSpecificPoint(slashTag, pointTitle).subscribe({
+      next: psr => {
+        console.log(`IS BROWSER: ${isPlatformBrowser(this.platformId)}`);
 
-            console.log(`IS BROWSER: ${isPlatformBrowser(this.platformId)}`);
+        this.DisplayPoints(psr);
 
-            this.DisplayPoints(psr);
+        // SSR Initial page render
+        if (!this.appData.initialPageRendered) {
+          const point = psr.points[0];
 
-            // SSR Initial page render
-            if (!this.appData.initialPageRendered) {
+          const preview = {
+            title: point.pointTitle,
+            preview: point.preview,
+            previewImage: point.previewImage
+          } as PagePreviewMetaData;
 
-              const point = psr.points[0];
+          console.log('WE HAVE A POINT', preview);
 
-              const preview = {
-                title: point.pointTitle,
-                preview: point.preview,
-                previewImage: point.previewImage
-              } as PagePreviewMetaData;
-
-              console.log('WE HAVE A POINT', preview);
-
-              this.appData.PagePreview$.next(preview);
-            }
-          },
-          error: err => {
-            this.error = err.error.detail;
-            this.alreadyFetchingPointsFromDB = false;
-          }
+          this.appData.PagePreview$.next(preview);
         }
-      );
+      },
+      error: err => {
+        this.error = err.error.detail;
+        this.alreadyFetchingPointsFromDB = false;
+      }
+    });
   }
 
   newSortType(pointSortType: PointSortTypes): void {
-
     if (this.pointCount > 1) {
       // Don't go to server to re-sort if only 1 point selected
 
@@ -243,37 +264,47 @@ export class PointsListComponent implements OnInit {
 
         this.alreadyFetchingPointsFromDB = true;
 
-        this.pointsService.NewPointSelectionOrder(pointSortType, reversalOnly)
-          .subscribe(
-            response => {
-              this.alreadyFetchingPointsFromDB = false;
+        this.pointsService
+          .NewPointSelectionOrder(pointSortType, reversalOnly)
+          .subscribe(response => {
+            this.alreadyFetchingPointsFromDB = false;
 
-              // pointCount is not updated for re-ordering
-              this.IDs = response.pointIDs;
-              this.points = response.points;
-              this.NewPointsDisplayed();
-            });
+            // pointCount is not updated for re-ordering
+            this.IDs = response.pointIDs;
+            this.points = response.points;
+            this.NewPointsDisplayed();
+          });
       }
     }
   }
 
   DisplayPoints(psr: PointSelectionResult): void {
-
     this.alreadyFetchingPointsFromDB = false;
-
 
     if (psr.pointCount > 0) {
       // If we don't have dateFrom and fromDate is returned, OR
       // returned date is LESS than original, use returned date
 
       if (this.filter) {
-        if (!this.filter.dateFrom && psr.fromDate || this.appData.Date1IsLessThanDate2(psr.fromDate, this.filter.dateFrom.toString())) {
+        if (
+          (!this.filter.dateFrom && psr.fromDate) ||
+          this.appData.Date1IsLessThanDate2(
+            psr.fromDate,
+            this.filter.dateFrom.toString()
+          )
+        ) {
           this.filter.dateFrom = new Date(psr.fromDate);
         }
 
         // If we don't have dateTo and toDate is returned, OR
         // returned date is GREATER than original, use returned date
-        if (!this.filter.dateTo && psr.toDate || this.appData.Date1IsLessThanDate2(this.filter.dateTo.toString(), psr.toDate)) {
+        if (
+          (!this.filter.dateTo && psr.toDate) ||
+          this.appData.Date1IsLessThanDate2(
+            this.filter.dateTo.toString(),
+            psr.toDate
+          )
+        ) {
           this.filter.dateTo = new Date(psr.toDate);
         }
       }
@@ -285,26 +316,22 @@ export class PointsListComponent implements OnInit {
     this.points = psr.points;
 
     this.NewPointsDisplayed();
-
   }
 
   // https://stackblitz.com/edit/free-vote-infinite-scroll
   fetchMorePoints(): void {
-
     if (!this.alreadyFetchingPointsFromDB) {
-
       // ToDo infinite scroll for MyPoints this.SelectedPoints();
 
       // https://stackoverflow.com/questions/38824349/how-to-convert-an-object-to-an-array-of-key-value-pairs-in-javascript
       // Construct array of next 10 points ids to be selected
-      const pids: ID[] = this.IDs
-        .filter(val => val.rowNumber > this.lastPageRow)
-        .slice(0, 10); // excludes end index;
+      const pids: ID[] = this.IDs.filter(
+        val => val.rowNumber > this.lastPageRow
+      ).slice(0, 10); // excludes end index;
 
       // Pass back next 10 PointIDs to be fetched for display
       // already filtered above - this is what we need to fetch now
       if (pids && pids.length > 0) {
-
         // Get new PAGE of points
         this.alreadyFetchingPointsFromDB = true;
         this.allPointsDisplayed = false;
@@ -313,8 +340,10 @@ export class PointsListComponent implements OnInit {
           this.points = this.points.concat(response.points);
           this.NewPointsDisplayed();
         });
-
-      } else if (this.lastBatchRow < this.pointCount && this.lastPageRow < this.pointCount) {
+      } else if (
+        this.lastBatchRow < this.pointCount &&
+        this.lastPageRow < this.pointCount
+      ) {
         // More defensive coding if DB givesd incorrect page count
 
         // Get another BATCH of points
@@ -323,25 +352,22 @@ export class PointsListComponent implements OnInit {
         this.allPointsDisplayed = false;
 
         if (this.filter) {
-          this.pointsService.GetNextBatch(this.filter.sortType, this.lastBatchRow + 1)
-            .subscribe(
-              response => {
-
-                // New Batch
-                this.IDs = response.pointIDs;
-                this.points = this.points.concat(response.points);
-                this.NewPointsDisplayed();
-              }
-            );
+          this.pointsService
+            .GetNextBatch(this.filter.sortType, this.lastBatchRow + 1)
+            .subscribe(response => {
+              // New Batch
+              this.IDs = response.pointIDs;
+              this.points = this.points.concat(response.points);
+              this.NewPointsDisplayed();
+            });
         }
-
       }
     }
   }
 
   NewPointsDisplayed(): void {
     this.alreadyFetchingPointsFromDB = false;
-    this.allPointsDisplayed = (this.points.length >= this.pointCount);
+    this.allPointsDisplayed = this.points.length >= this.pointCount;
     this.appData.PointsSelected$.next();
   }
 

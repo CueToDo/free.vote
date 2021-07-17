@@ -1,6 +1,14 @@
-
 // Angular
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, ViewChild, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  Input,
+  Output,
+  ViewChild,
+  EventEmitter
+} from '@angular/core';
 
 // Material
 import { MatSlider, MatSliderChange } from '@angular/material/slider';
@@ -22,11 +30,10 @@ import { IssuesService } from 'src/app/services/issues.service';
   styleUrls: ['./issue.component.css']
 })
 export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
-
   @Input() organisationName = '';
   @Input() groupName = '';
 
-  @Input() issue= new Issue();
+  @Input() issue = new Issue();
   @Input() inFocus = false;
 
   @Output() Deleted = new EventEmitter();
@@ -73,28 +80,25 @@ export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
   deleteTooltip = 'delete issue';
   editTooltip = 'edit issue';
 
-
   @ViewChild('voteSlider') voteSlider!: MatSlider;
   votechange$: Subscription | undefined;
 
   constructor(
     private issuesService: IssuesService,
     private appData: AppDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     if (this.issue) {
-
       if (this.issue.statusID === IssueStatuses.Closed) {
-        this.editTooltip = 'Closed issues can\'t be edited';
+        this.editTooltip = "Closed issues can't be edited";
       }
 
       if (this.issue.porQTotal > 0) {
-        this.deleteTooltip = 'Issues cannot be deleted with questions, perspectives or proposals';
+        this.deleteTooltip =
+          'Issues cannot be deleted with questions, perspectives or proposals';
       }
     }
-
   }
 
   ngAfterViewInit(): void {
@@ -102,9 +106,7 @@ export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.voteSlider) {
       this.votechange$ = this.voteSlider.valueChange
         // Don't need a debounce time - slider does not emit value until user releases slider
-        .subscribe(
-          { next: (value: number) => this.voteToDiscuss(value) }
-        );
+        .subscribe({ next: (value: number) => this.voteToDiscuss(value) });
     }
   }
 
@@ -113,45 +115,42 @@ export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   delete(): void {
-
     if (!this.issue) {
       this.error = 'Issue not selected';
     } else {
-
       if (confirm('Are you sure you wish to delete this issue?')) {
         this.saving = true;
-        this.issuesService.IssueDelete(this.issue.groupID, this.issue.issueID).subscribe(
-          {
+        this.issuesService
+          .IssueDelete(this.issue.groupID, this.issue.issueID)
+          .subscribe({
             next: () => {
               this.saving = false;
               this.issueDeleted = true;
               this.saveMessage = 'deleted';
             },
-            error: serverError => this.error = serverError.error.detail,
+            error: serverError => (this.error = serverError.error.detail),
             complete: () => this.Deleted.emit(true)
-          }
-        );
+          });
       }
     }
   }
 
-
   issuepublish(publish: boolean): void {
-
     if (!this.issue) {
       this.error = 'Issue not selected';
     } else {
-
       this.saving = true;
-      this.issuesService.IssuePublish(this.issue.issueID, publish).subscribe(
-        {
-          next: () => {
-            this.saving = false;
-            if (publish) { this.saveMessage = 'published'; } else { this.saveMessage = 'unpublished'; }
-          },
-          error: serverError => this.error = serverError.error.detail
-        }
-      );
+      this.issuesService.IssuePublish(this.issue.issueID, publish).subscribe({
+        next: () => {
+          this.saving = false;
+          if (publish) {
+            this.saveMessage = 'published';
+          } else {
+            this.saveMessage = 'unpublished';
+          }
+        },
+        error: serverError => (this.error = serverError.error.detail)
+      });
     }
   }
 
@@ -160,7 +159,9 @@ export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error = 'Issue not selected';
     } else {
       let priority = 0;
-      if (event.value) { priority = event.value; }
+      if (event.value) {
+        priority = event.value;
+      }
       this.issue.voterPriority = priority;
     }
   }
@@ -170,19 +171,17 @@ export class IssueComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error = 'Issue not selected';
     } else {
       this.saving = true;
-      this.issuesService.VoteToDiscuss(this.issue.issueID, priority).subscribe(
-        {
-          next: ipv => {
-            if (this.issue) {
-              this.issue.prioritisationVotes = ipv.prioritisationVotes;
-              this.issue.voteCastDateTime = ipv.voteCastDateTime;
-              this.saveMessage = 'vote saved';
-            }
-            this.saving = false;
-          },
-          error: serverError => this.error = serverError.error.detail
-        }
-      );
+      this.issuesService.VoteToDiscuss(this.issue.issueID, priority).subscribe({
+        next: ipv => {
+          if (this.issue) {
+            this.issue.prioritisationVotes = ipv.prioritisationVotes;
+            this.issue.voteCastDateTime = ipv.voteCastDateTime;
+            this.saveMessage = 'vote saved';
+          }
+          this.saving = false;
+        },
+        error: serverError => (this.error = serverError.error.detail)
+      });
     }
   }
 

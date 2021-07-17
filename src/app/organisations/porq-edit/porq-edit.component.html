@@ -1,10 +1,10 @@
-
 <form (ngSubmit)="onSubmit()" #formPorQ="ngForm">
 
     <!-- Title -->
     <div class="mx-3 mt-3">
         <mat-form-field class="porQTitle">
-            <input matInput [placeholder]="'Your ' + appData.PorQType(porQEdit.porQTypeID)" [(ngModel)]="porQEdit.title" type="text" name="porQTitle">
+            <input matInput [placeholder]="'Your ' + appData.PorQType(porQEdit.porQTypeID)" [(ngModel)]="porQEdit.title"
+                type="text" name="porQTitle">
         </mat-form-field>
     </div>
 

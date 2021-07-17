@@ -1,6 +1,14 @@
-
 // Angular
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
 import { MatSelect } from '@angular/material/select';
 
 // rxjs
@@ -21,7 +29,6 @@ import { OrganisationsService } from 'src/app/services/groups.service';
   styleUrls: ['./organisation-edit.component.css']
 })
 export class OrganisationEditComponent implements OnInit, OnDestroy {
-
   @Input() organisation = new Organisation();
   @Output() organisationChange = new EventEmitter();
 
@@ -29,10 +36,13 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
   @Output() Complete = new EventEmitter<Organisation>();
 
   @ViewChild('groupName', { static: true }) elGroupName: ElementRef | undefined;
-  @ViewChild('groupDescription', { static: true }) elGroupDescription: ElementRef | undefined;
-  @ViewChild('groupWebsite', { static: true }) elGroupWebsite: ElementRef | undefined;
+  @ViewChild('groupDescription', { static: true }) elGroupDescription:
+    | ElementRef
+    | undefined;
+  @ViewChild('groupWebsite', { static: true }) elGroupWebsite:
+    | ElementRef
+    | undefined;
   @ViewChild('geoExtent', { static: true }) elGeoExtent: MatSelect | undefined;
-
 
   private groups$: Subscription | undefined;
   private extents$: Subscription | undefined;
@@ -43,17 +53,23 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
   extents: Kvp[] = [];
 
   get showCountries(): boolean {
-    if (!this.organisation) { return false; }
+    if (!this.organisation) {
+      return false;
+    }
     return this.appData.ShowCountries(this.organisation.geographicalExtentID);
   }
 
   get showRegions(): boolean {
-    if (!this.organisation) { return false; }
+    if (!this.organisation) {
+      return false;
+    }
     return this.appData.ShowRegions(this.organisation.geographicalExtentID);
   }
 
   get showCities(): boolean {
-    if (!this.organisation) { return false; }
+    if (!this.organisation) {
+      return false;
+    }
     return this.appData.ShowCities(this.organisation.geographicalExtentID);
   }
 
@@ -62,17 +78,13 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
   constructor(
     private appData: AppDataService,
     private groupsService: OrganisationsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
-    this.extents$ = this.appData.GeographicalExtents().subscribe(
-      {
-        next: extents => this.extents = extents,
-        error: serverError => this.error = serverError.error.detail
-      }
-    );
-
+    this.extents$ = this.appData.GeographicalExtents().subscribe({
+      next: extents => (this.extents = extents),
+      error: serverError => (this.error = serverError.error.detail)
+    });
   }
 
   public ClearError(): void {
@@ -102,11 +114,16 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
   }
 
   Update(): void {
-
     if (this.organisation) {
       if (this.appData.isUrlNameUnSafe(this.organisation.organisationName)) {
-        if (confirm('Sub Group name contains invalid characters. Remove them now?')) {
-          this.organisation.organisationName = this.appData.urlSafeName(this.organisation.organisationName);
+        if (
+          confirm(
+            'Sub Group name contains invalid characters. Remove them now?'
+          )
+        ) {
+          this.organisation.organisationName = this.appData.urlSafeName(
+            this.organisation.organisationName
+          );
         } else {
           return;
         }
@@ -115,21 +132,19 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
       this.error = '';
       const newGroup = this.organisation.organisationID < 1;
 
-      this.groups$ = this.groupsService.Update(this.organisation)
-        .subscribe(
-          {
-            next: group => {
-              this.Complete.emit(group);
-              if (newGroup) {
-                this.organisation = new Organisation();
-                this.organisation.geographicalExtentID = GeographicalExtentID.National.toString();
-              }
-            },
-            error: serverError => {
-              this.error = serverError.error.detail;
-            }
+      this.groups$ = this.groupsService.Update(this.organisation).subscribe({
+        next: group => {
+          this.Complete.emit(group);
+          if (newGroup) {
+            this.organisation = new Organisation();
+            this.organisation.geographicalExtentID =
+              GeographicalExtentID.National.toString();
           }
-        );
+        },
+        error: serverError => {
+          this.error = serverError.error.detail;
+        }
+      });
     }
   }
 
@@ -138,8 +153,11 @@ export class OrganisationEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.groups$) { this.groups$.unsubscribe(); }
-    if (this.extents$) { this.extents$.unsubscribe(); }
+    if (this.groups$) {
+      this.groups$.unsubscribe();
+    }
+    if (this.extents$) {
+      this.extents$.unsubscribe();
+    }
   }
-
 }

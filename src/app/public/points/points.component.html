@@ -11,7 +11,8 @@
           </mat-checkbox>
           <mat-checkbox labelPosition="before" [(ngModel)]="filter.applyAliasFilter" (change)="VoterFilter()">voter
           </mat-checkbox>
-          <mat-checkbox labelPosition="before" [(ngModel)]="filter.favourites" #checkbox="matCheckbox" (change)="FilterFavs(checkbox)">
+          <mat-checkbox labelPosition="before" [(ngModel)]="filter.favourites" #checkbox="matCheckbox"
+            (change)="FilterFavs(checkbox)">
             {{ favouritesText }}</mat-checkbox>
           <mat-checkbox labelPosition="before" [(ngModel)]="filter.anyTag" (change)="FilterOnTag()">any tag
           </mat-checkbox>
@@ -19,7 +20,8 @@
           </mat-checkbox>
           <mat-checkbox labelPosition="before" [(ngModel)]="filter.applyTypeFilter" (change)="FilterOnType()">type
           </mat-checkbox>
-          <mat-checkbox labelPosition="before" [(ngModel)]="filter.applyDateFilter" #checkbox="matCheckbox" (change)="FilterOnDates(checkbox)">
+          <mat-checkbox labelPosition="before" [(ngModel)]="filter.applyDateFilter" #checkbox="matCheckbox"
+            (change)="FilterOnDates(checkbox)">
             dates
           </mat-checkbox>
           <mat-checkbox labelPosition="before" [(ngModel)]="filter.applyFeedbackFilter" (change)="FilterOnFeedback()">
@@ -73,8 +75,8 @@
         <mat-form-field class="myMatInput">
           <input matInput name="pointTextFilter" [(ngModel)]="filter.text" placeholder="enter point filter text"
             (keyup.enter)="Select()">
-          <button mat-button *ngIf="filter.text" matSuffix mat-icon-button aria-label="Clear"
-            (click)="filter.text=''" type="button">
+          <button mat-button *ngIf="filter.text" matSuffix mat-icon-button aria-label="Clear" (click)="filter.text=''"
+            type="button">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>

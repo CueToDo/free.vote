@@ -1,41 +1,42 @@
 <form (ngSubmit)="onSubmit()" #formPoint="ngForm">
 
-    <!-- Title -->
-    <div class="mx-3 mt-3">
-      <mat-form-field class="questionEdit">
-        <textarea matInput placeholder="question" [(ngModel)]="questionEdit.question" name="questionEdit" #tvQuestion="ngModel"  (blur)="onQuestionBlur()"></textarea>
-      </mat-form-field>
-    </div>
-    
-    <!-- ToolBar -->
-    <div class="toolbar" fxLayout="row wrap" fxLayoutAlign="end center">
-   
-      <span class="spinner-grow text-primary ml-3" role="status" *ngIf="saving">
-        <span class="sr-only">Loading...</span>
-      </span>
-  
-      <span class="fv-error" *ngIf="userTouched && !tvQuestion.valid">
-        Question text is required
-      </span>
-  
-      <div class="fv-error mt-2" *ngIf="error && error !== ''">
-        {{ error }}
-      </div>
-  
-      <mat-checkbox [(ngModel)]="questionEdit.draft" name="draftQuestion">
-        draft
-      </mat-checkbox>
-  
-      <button mat-stroked-button>
-        <mat-icon>save</mat-icon>
-        save
-      </button>
-  
-      <button mat-stroked-button type="button" (click)="Cancel()">
-        <mat-icon>cancel</mat-icon>
-        cancel
-      </button>
+  <!-- Title -->
+  <div class="mx-3 mt-3">
+    <mat-form-field class="questionEdit">
+      <textarea matInput placeholder="question" [(ngModel)]="questionEdit.question" name="questionEdit"
+        #tvQuestion="ngModel" (blur)="onQuestionBlur()"></textarea>
+    </mat-form-field>
+  </div>
 
+  <!-- ToolBar -->
+  <div class="toolbar" fxLayout="row wrap" fxLayoutAlign="end center">
+
+    <span class="spinner-grow text-primary ml-3" role="status" *ngIf="saving">
+      <span class="sr-only">Loading...</span>
+    </span>
+
+    <span class="fv-error" *ngIf="userTouched && !tvQuestion.valid">
+      Question text is required
+    </span>
+
+    <div class="fv-error mt-2" *ngIf="error && error !== ''">
+      {{ error }}
     </div>
-  
-  </form>
+
+    <mat-checkbox [(ngModel)]="questionEdit.draft" name="draftQuestion">
+      draft
+    </mat-checkbox>
+
+    <button mat-stroked-button>
+      <mat-icon>save</mat-icon>
+      save
+    </button>
+
+    <button mat-stroked-button type="button" (click)="Cancel()">
+      <mat-icon>cancel</mat-icon>
+      cancel
+    </button>
+
+  </div>
+
+</form>

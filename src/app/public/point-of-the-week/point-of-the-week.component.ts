@@ -1,19 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-
-import { AppDataService } from '../../services/app-data.service';
+import { Component } from '@angular/core';
 
 @Component({
   templateUrl: './point-of-the-week.component.html',
   styleUrls: ['./point-of-the-week.component.css']
 })
-export class PointOfTheWeekComponent implements OnInit {
-
-  constructor() {
-
-  }
-
-  ngOnInit() {
-
-  }
-
+export class PointOfTheWeekComponent {
+  constructor() {}
 }

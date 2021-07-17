@@ -1,4 +1,3 @@
-
 // Angular
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 
@@ -13,14 +12,12 @@ import { PointSortTypes } from 'src/app/models/enums';
 import { AppDataService } from 'src/app/services/app-data.service';
 import { QuestionsService } from 'src/app/services/questions.service';
 
-
 @Component({
   selector: 'app-question-edit',
   templateUrl: './question-edit.component.html',
   styleUrls: ['./question-edit.component.css']
 })
 export class QuestionEditComponent implements OnInit {
-
   @Input() public question = new Question();
   questionEdit!: QuestionEdit;
 
@@ -35,7 +32,7 @@ export class QuestionEditComponent implements OnInit {
   constructor(
     private appData: AppDataService,
     private questionService: QuestionsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     if (!!this.question) {
@@ -68,34 +65,33 @@ export class QuestionEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-
     const isNew = this.questionEdit.questionID < 1;
 
-    this.questionService.QuestionUpdate(this.questionEdit).subscribe(
-      {
-        next: questionID => {
-          this.question.questionID = questionID;
-          this.question.question = this.questionEdit.question;
-          this.question.draft = this.questionEdit.draft;
-          // SlashTag can't be upated
-        },
-        error: serverError => {
-          this.error = serverError.error.detail;
-          console.log(serverError);
-        },
-        complete: () => {
-          this.ClearQuestion();
-          this.CompleteEdit.emit();
+    this.questionService.QuestionUpdate(this.questionEdit).subscribe({
+      next: questionID => {
+        this.question.questionID = questionID;
+        this.question.question = this.questionEdit.question;
+        this.question.draft = this.questionEdit.draft;
+        // SlashTag can't be upated
+      },
+      error: serverError => {
+        this.error = serverError.error.detail;
+        console.log(serverError);
+      },
+      complete: () => {
+        this.ClearQuestion();
+        this.CompleteEdit.emit();
 
-          // Communicate change to sibling PointsComponent
-          // where Points ReSelection Takes place:
-          if (isNew) {
-            this.appData.SetSlashTag(this.questionEdit.slashTag, PointSortTypes.DateDescend);
-          }
+        // Communicate change to sibling PointsComponent
+        // where Points ReSelection Takes place:
+        if (isNew) {
+          this.appData.SetSlashTag(
+            this.questionEdit.slashTag,
+            PointSortTypes.DateDescend
+          );
         }
       }
-    );
-
+    });
   }
 
   Cancel(): void {

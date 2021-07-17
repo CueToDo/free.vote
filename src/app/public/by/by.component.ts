@@ -20,7 +20,6 @@ import { TagsService } from '../../services/tags.service';
   preserveWhitespaces: true
 })
 export class ByComponent implements OnInit, OnDestroy {
-
   // Subscriptions
   private aliases$: Subscription | undefined;
 
@@ -39,12 +38,12 @@ export class ByComponent implements OnInit, OnDestroy {
     private localData: LocalDataService,
     public appData: AppDataService,
     private tagsService: TagsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     // Get Aliases
-    this.aliases$ = this.tagsService.ByAliases('1 jan 2000', '31 dec 2050')
+    this.aliases$ = this.tagsService
+      .ByAliases('1 jan 2000', '31 dec 2050')
       .subscribe(response => {
         this.byAliases = response;
         this.waitingVoters = false;
@@ -52,22 +51,17 @@ export class ByComponent implements OnInit, OnDestroy {
 
     // The ActivatedRoute dies with the routed component and so
     // the subscription dies with it.
-    this.activatedRoute.paramMap
-      .subscribe(
-        (params: ParamMap) => {
-          const alias = params.get('alias');
-          if (alias) {
-            this.ListTopicsByAlias(alias);
-          }
-        }
-      );
-
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const alias = params.get('alias');
+      if (alias) {
+        this.ListTopicsByAlias(alias);
+      }
+    });
   }
 
   FontSize(Weight: number): string {
     return 100 + Weight * 50 + '%'; // perCent
   }
-
 
   highlight(byAlias: string): void {
     for (let i = 0; i < this.byAliases.length; i++) {
@@ -75,11 +69,8 @@ export class ByComponent implements OnInit, OnDestroy {
     }
   }
 
-
   ListTopicsByAlias(byAlias: string): void {
-
     if (byAlias) {
-
       this.highlight(byAlias);
 
       this.byAlias = byAlias;
@@ -93,7 +84,8 @@ export class ByComponent implements OnInit, OnDestroy {
 
       this.waitingTopics = true;
 
-      this.tagsService.TopicsByAlias(byAlias, '1 Jan 2000', '31 Dec 2030')
+      this.tagsService
+        .TopicsByAlias(byAlias, '1 Jan 2000', '31 Dec 2030')
         .subscribe(response => {
           this.onTopics = response;
           this.waitingTopics = false;

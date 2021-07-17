@@ -47,8 +47,4 @@ import { DatepickerComponent } from './datepicker/datepicker.component';
   ],
   providers: []
 })
-export class CustomModule {
-
-}
-
-
+export class CustomModule {}

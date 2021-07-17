@@ -34,8 +34,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatProgressBarModule
   ]
 })
-export class MaterialModule { }
-
+export class MaterialModule {}
 
 /*
   Copyright 2018 Google Inc. All Rights Reserved.

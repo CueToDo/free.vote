@@ -5,10 +5,9 @@ import { LocalDataService } from './local-data.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginRouteGuardService implements CanActivate {
-
   currentDate = new Date();
 
-  constructor(private localData: LocalDataService) { }
+  constructor(private localData: LocalDataService) {}
 
   canActivate(): boolean {
     this.currentDate = new Date();
@@ -18,5 +17,4 @@ export class LoginRouteGuardService implements CanActivate {
   requiresLogin(url: string): boolean {
     return url.includes('/profile') || url.includes('/my/');
   }
-
 }

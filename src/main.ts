@@ -8,15 +8,14 @@ export function getBaseUrl(): string {
   return document.getElementsByTagName('base')[0].href;
 }
 
-const providers = [
-  { provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] }
-];
+const providers = [{ provide: 'BASE_URL', useFactory: getBaseUrl, deps: [] }];
 
 if (environment.production) {
   enableProdMode();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  platformBrowserDynamic(providers).bootstrapModule(AppModule)
+  platformBrowserDynamic(providers)
+    .bootstrapModule(AppModule)
     .catch((err: any) => console.log(err));
 });

@@ -1,4 +1,3 @@
-
 // Angular
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -34,7 +33,6 @@ enum tabs {
   styleUrls: ['./tags-points.component.css']
 })
 export class TagsPointsComponent implements OnInit, OnDestroy {
-
   // Subscriptions
   showPointsTab$: Subscription | undefined;
   reSelectPoints$: Subscription | undefined;
@@ -49,7 +47,9 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   public tabIndex = tabs.recentTags;
 
   public topicSelected = '';
-  public get slashTagSelected(): string { return this.localData.TopicToSlashTag(this.topicSelected); }
+  public get slashTagSelected(): string {
+    return this.localData.TopicToSlashTag(this.topicSelected);
+  }
 
   public TagCloudTypes = TagCloudTypes;
   public haveRecentSlashTags = false;
@@ -74,8 +74,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   public sortToolTip = '';
   public sortOrderIcon = '';
 
-
-
   // use TRV in parent template https://stackblitz.com/edit/angular-vjbf4s?file=src%2Fapp%2Fcart-table-modal.component.ts
   // use child component type in parent component https://stackoverflow.com/questions/31013461/call-a-method-of-the-child-component
   @ViewChild(PointsComponent, { static: false }) appPoints!: PointsComponent;
@@ -86,11 +84,10 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private appData: AppDataService,
-    public localData: LocalDataService) {
-  }
+    public localData: LocalDataService
+  ) {}
 
   ngOnInit(): void {
-
     this.appData.TagsPointsActive$.next(true);
 
     this.SetSortTypeIcon(PointSortTypes.TrendingActivity);
@@ -101,7 +98,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     const routeparts = this.appData.Route.split('/');
 
     if (routeparts && routeparts.length === 3) {
-
       // {0}/slash-tags/trending - length = 3
 
       this.topicSelected = this.localData.PreviousTopicSelected;
@@ -117,9 +113,7 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
         default:
           this.tabIndex = tabs.points;
       }
-
     } else {
-
       // Route is Topic By Alias
       // {0}/{slashTag}/by/{Alias} - length = 4
       this.topicSelected = this.localData.SlashTagToTopic(routeparts[1]);
@@ -128,26 +122,24 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     }
 
     if (!this.topicSelected || this.topicSelected === 'null') {
-      this.appData.TagLatestActivity()
-        .subscribe({
-          next: slashTag => {
-            this.localData.PreviousSlashTagSelected = slashTag;
-            this.topicSelected = this.localData.PreviousTopicSelected;
-          },
-          error: error => console.log('Server Error on getting last slash tag', error)
-        });
+      this.appData.TagLatestActivity().subscribe({
+        next: slashTag => {
+          this.localData.PreviousSlashTagSelected = slashTag;
+          this.topicSelected = this.localData.PreviousTopicSelected;
+        },
+        error: error =>
+          console.log('Server Error on getting last slash tag', error)
+      });
     }
 
     // ==========   Subscriptions   ==========
 
     // Just switch to Points Tab if ByOn hasn't changed
-    this.showPointsTab$ = this.appData.ShowPointsTab$.subscribe(
-      () => {
-        this.externalTrigger = true;
-        this.ChangeTab(tabs.points);
-        this.externalTrigger = false;
-      }
-    );
+    this.showPointsTab$ = this.appData.ShowPointsTab$.subscribe(() => {
+      this.externalTrigger = true;
+      this.ChangeTab(tabs.points);
+      this.externalTrigger = false;
+    });
 
     this.reSelectPoints$ = this.appData.ReSelectPoints$.subscribe(
       (pointSortType: PointSortTypes) => {
@@ -163,8 +155,8 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
         this.ChangeTab(tabs.points);
 
         this.externalTrigger = false;
-      });
-
+      }
+    );
 
     this.pointsFilterRemove$ = this.appData.PointsFilterRemove$.subscribe(
       () => {
@@ -175,10 +167,9 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     );
 
     // appComponent monitors width and broadcasts via appDataService
-    this.width$ = this.appData.DisplayWidth$.subscribe(
-      (widthBand: number) => {
-        this.widthBand = widthBand;
-      });
+    this.width$ = this.appData.DisplayWidth$.subscribe((widthBand: number) => {
+      this.widthBand = widthBand;
+    });
 
     // Route does not change if link clicked in tag cloud
     // So need to detect route parameter change
@@ -192,7 +183,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     // The ActivatedRoute dies with the routed component and so
     // the subscription dies with it.
     this.activatedRoute.paramMap.subscribe(params => {
-
       const titleParam = params.get('title');
       if (titleParam) {
         this.qp = 'point';
@@ -218,17 +208,14 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     this.haveRecentSlashTags = haveTags;
   }
 
-
   /// Change Tab and notify app component in TabChangeComplete
   ChangeTab(tabIndex: tabs): void {
-
     // Actual tab change, or just title change (due to voter filters)
     const tabChanged = this.tabIndex !== tabIndex;
 
     this.tabIndex = tabIndex;
 
     switch (tabIndex) {
-
       case tabs.trendingTags:
         this.TabChangeComplete(tabChanged, '/slash-tags/trending');
         break;
@@ -246,14 +233,18 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
         // AND child Tags and Points Components
         const alias = this.localData.ActiveAliasForFilter;
         if (alias) {
-
           if (!this.externalTrigger) {
             // Communicate the change - it's just a tab change, not a previous alias or topic change
           }
 
-          if (!this.applyingFilter) { this.displayFilter(true); }
+          if (!this.applyingFilter) {
+            this.displayFilter(true);
+          }
           // Filter on Alias
-          this.TabChangeComplete(tabChanged, `/${this.topicSelected}/by/${alias}`);
+          this.TabChangeComplete(
+            tabChanged,
+            `/${this.topicSelected}/by/${alias}`
+          );
         } else if (!this.externalTrigger) {
           this.TabChangeComplete(tabChanged, this.slashTagSelected); // Tell the app component
         }
@@ -278,7 +269,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   }
 
   changeQP(): void {
-
     const filterQuestions = this.qp === 'question';
 
     // Switch to points display if on trending or recent
@@ -293,7 +283,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
 
   // From the template filter button and directly from child Points Component
   applyFilter(filter: boolean): void {
-
     this.displayFilter(filter); /// may be recalled in ChangeTab
 
     this.applyingFilter = true;
@@ -303,7 +292,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
 
   // init, subscription, ChangeTab, applyFilter
   displayFilter(filter: boolean): void {
-
     this.showingFilter = filter;
 
     if (this.showingFilter) {
@@ -317,7 +305,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     }
 
     if (!this.externalTrigger) {
-
       // Only get Points component to reselect points if there is a change of filter criteria
       let filterChange = false;
       if (!this.appPoints) {
@@ -347,10 +334,10 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   }
 
   SetSortTypeIcon(pointSortType: PointSortTypes): void {
-
     if (pointSortType !== PointSortTypes.NoChange) {
-
-      if (pointSortType === PointSortTypes.DateDescend) { pointSortType = PointSortTypes.DateCreated; }
+      if (pointSortType === PointSortTypes.DateDescend) {
+        pointSortType = PointSortTypes.DateCreated;
+      }
 
       this.pointSortType = pointSortType;
 
@@ -376,7 +363,6 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
   }
 
   SetSortDescending(descending: boolean): void {
-
     this.sortDescending = descending;
     this.savedSortDescending = descending;
     this.sortAscending = !descending;
@@ -391,13 +377,13 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     }
 
     this.SetSortTypeIcon(this.pointSortType);
-
   }
 
   sortBy(pointSortType: PointSortTypes): void {
-
-    if (this.pointSortType !== pointSortType || pointSortType === PointSortTypes.Random) {
-
+    if (
+      this.pointSortType !== pointSortType ||
+      pointSortType === PointSortTypes.Random
+    ) {
       // New sort order or user clicked random again
 
       // Communicate to PointsComponent - is a child could/should use Input?
@@ -451,5 +437,4 @@ export class TagsPointsComponent implements OnInit, OnDestroy {
     this.pointsFilterRemove$?.unsubscribe();
     this.width$?.unsubscribe();
   }
-
 }

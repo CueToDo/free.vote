@@ -21,7 +21,6 @@ import { AppDataService } from 'src/app/services/app-data.service';
   styleUrls: ['./issue-edit.component.css']
 })
 export class IssueEditComponent implements OnInit {
-
   // Originally had notionally one-way databinding but was getting 2-way with NO Output() issueChange
   // and no banana in a box on parent ... WHY?
   // Now need to do manual update to prevent the 2 way binding on cancel edit
@@ -44,7 +43,7 @@ export class IssueEditComponent implements OnInit {
   constructor(
     private issuesService: IssuesService,
     public appData: AppDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     // For some reason need to cast to any before cast to issue ???
@@ -53,33 +52,28 @@ export class IssueEditComponent implements OnInit {
 
   // https://stackoverflow.com/questions/44012321/meaning-of-var-ngmodel
 
-  onCKEBlur(): void {
-
-  }
+  onCKEBlur(): void {}
 
   onSubmit(): void {
-
     this.error = '';
 
     if (!this.issueClone) {
       this.error = 'Nothing to save';
     } else {
       this.saving = true;
-      this.issuesService.IssueUpdate(this.issueClone).subscribe(
-        {
-          next: (statusID: IssueStatuses) => {
-            this.issueChange.emit(this.issueClone);
-            this.CompleteEdit.emit(statusID);
-          },
-          error: serverError => {
-            this.saving = false;
-            this.error = serverError.error.detail;
-          },
-          complete: () => {
-            this.saving = false;
-          }
+      this.issuesService.IssueUpdate(this.issueClone).subscribe({
+        next: (statusID: IssueStatuses) => {
+          this.issueChange.emit(this.issueClone);
+          this.CompleteEdit.emit(statusID);
+        },
+        error: serverError => {
+          this.saving = false;
+          this.error = serverError.error.detail;
+        },
+        complete: () => {
+          this.saving = false;
         }
-      );
+      });
     }
   }
 

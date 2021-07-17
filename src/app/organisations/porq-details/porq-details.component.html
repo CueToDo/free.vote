@@ -5,10 +5,12 @@
         <div class="content">
             <a [routerLink]="'/groups/membership'">List all groups</a> >
             <a [routerLink]="['/group', appData.kebabUri(groupName)]">{{ groupName }}</a> >
-            <a [routerLink]="['/group', appData.kebabUri(groupName), appData.kebabUri(subGroupName)]">{{ subGroupName }}</a> >
+            <a [routerLink]="['/group', appData.kebabUri(groupName), appData.kebabUri(subGroupName)]">{{ subGroupName
+                }}</a> >
             <a
-                [routerLink]="['/group', appData.kebabUri(groupName), appData.kebabUri(subGroupName), appData.kebabUri(issueTitle)]">{{ issueTitle }}</a>
-                > {{ porQType }}
+                [routerLink]="['/group', appData.kebabUri(groupName), appData.kebabUri(subGroupName), appData.kebabUri(issueTitle)]">{{
+                issueTitle }}</a>
+            > {{ porQType }}
         </div>
     </div>
 
@@ -41,7 +43,8 @@
                 <!-- Points List -->
                 <ng-container *ngIf="!editNewPoint">
                     <div *ngFor="let point of points">
-                        <app-point [point]="point" [isPorQPoint]="true" [pointCount]="pointCount" (PointDeleted)="onPointDeleted($event)">
+                        <app-point [point]="point" [isPorQPoint]="true" [pointCount]="pointCount"
+                            (PointDeleted)="onPointDeleted($event)">
                         </app-point>
                     </div>
                 </ng-container>

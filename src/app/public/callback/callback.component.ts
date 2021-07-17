@@ -12,7 +12,6 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './callback.component.html'
 })
 export class CallbackComponent implements OnInit, OnDestroy {
-
   // Used by Auth0 only after sign in attempt
 
   private callback$: Subscription | undefined;
@@ -24,36 +23,33 @@ export class CallbackComponent implements OnInit, OnDestroy {
   constructor(
     private auth: AuthService,
     public localData: LocalDataService,
-    private router: Router) { }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-
     // Don't call this.appDataService.PageTitleChangeSubject$.next
     // app.component subscribes to this and calls this.location.replaceState
     // This prevents completion of Auth0 login
 
     console.log('callback component: initialising');
 
-    this.callback$ = this.auth.handleAuthCallback().subscribe(
-      {
-        next: targetRoute => {
-          console.log('targetRoute', targetRoute);
-          this.router.navigate([targetRoute]);
-          console.log('navigated');
-        },
-        error: serverError => {
-          if (serverError.error.detail) {
-            this.error = serverError.error.detail;
-          } else if (serverError.error) {
-            this.error = serverError.error;
-          } else if (serverError) {
-            this.error = serverError;
-          }
-        },
-        complete: () => this.handlingCallback = false // even if error
-      }
-    );
-
+    this.callback$ = this.auth.handleAuthCallback().subscribe({
+      next: targetRoute => {
+        console.log('targetRoute', targetRoute);
+        this.router.navigate([targetRoute]);
+        console.log('navigated');
+      },
+      error: serverError => {
+        if (serverError.error.detail) {
+          this.error = serverError.error.detail;
+        } else if (serverError.error) {
+          this.error = serverError.error;
+        } else if (serverError) {
+          this.error = serverError;
+        }
+      },
+      complete: () => (this.handlingCallback = false) // even if error
+    });
   }
 
   signOut(): void {

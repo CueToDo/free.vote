@@ -13,19 +13,14 @@ import { ByOn } from '../models/ByOn.model';
 // Services
 import { HttpService } from './http.service';
 
-
 @Injectable({ providedIn: 'root' })
 export class TagsService {
-
-  constructor(private httpClientService: HttpService) {
-  }
+  constructor(private httpClientService: HttpService) {}
 
   // OnInit() works with Directives and Components.
   // It does not work with other types, like a service
 
-
   TagCloud(type: TagCloudTypes): Observable<Tag[]> {
-
     let WebAPIUrl = '';
 
     switch (type) {
@@ -37,17 +32,12 @@ export class TagsService {
         break;
     }
 
-
     return this.httpClientService
       .get(WebAPIUrl)
-      .pipe(
-        map(data => data as Tag[])
-      );
-
+      .pipe(map(data => data as Tag[]));
   }
 
   ByAliases(dateFrom: string, dateTo: string): Observable<ByOn[]> {
-
     const WebAPIUrl = 'tags/byaliases';
 
     const postData = { dateFrom, dateTo };
@@ -57,16 +47,17 @@ export class TagsService {
       .pipe(map(data => data as ByOn[])); // A "ByOn" cloud
   }
 
-  TopicsByAlias(byAlias: string, dateFrom: string, dateTo: string): Observable<ByOn[]> {
-
+  TopicsByAlias(
+    byAlias: string,
+    dateFrom: string,
+    dateTo: string
+  ): Observable<ByOn[]> {
     const WebAPIUrl = 'tags/byalias';
 
-    const postData = { 'byAlias': byAlias, 'dateFrom': dateFrom, 'dateTo': dateTo };
+    const postData = { byAlias: byAlias, dateFrom: dateFrom, dateTo: dateTo };
 
     return this.httpClientService
       .post(WebAPIUrl, postData)
       .pipe(map(data => data as ByOn[])); // A "ByOn" cloud
   }
-
-
 }

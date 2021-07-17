@@ -3,7 +3,6 @@ import { PorQTypes } from './enums';
 // Always use camelCase properties
 // https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_Serialization_CamelCasePropertyNamesContractResolver.htm
 
-
 import { ID } from './common';
 
 export class PorQ {
@@ -38,11 +37,9 @@ export class PorQ {
     }
     return '';
   }
-
 }
 
 export class PorQSelectionResult {
-
   porQCount = 0;
 
   porQIDs: ID[] = [];

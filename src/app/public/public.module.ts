@@ -1,4 +1,3 @@
-
 // Angular
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -41,7 +40,6 @@ import { QuestionEditComponent } from './question-edit/question-edit.component';
 import { QuestionComponent } from './question/question.component';
 import { QuestionAnswersComponent } from './question-answers/question-answers.component';
 import { CkeUniversalComponent } from './cke-universal/cke-universal.component';
-
 
 @NgModule({
   imports: [
@@ -87,4 +85,4 @@ import { CkeUniversalComponent } from './cke-universal/cke-universal.component';
     ListComponent
   ]
 })
-export class PublicModule { }
+export class PublicModule {}

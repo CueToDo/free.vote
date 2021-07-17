@@ -57,7 +57,7 @@
     <a *ngIf="point.linkAddress" [href]="point.linkAddress" target="_blank">
       <!-- Link Preview -->
       <div *ngIf="point.showLinkPreview" class="linkFromMeta" fxLayout="row" fxLayoutAlign="center">
-        <div fxFlex="30" class="linkImage"> 
+        <div fxFlex="30" class="linkImage">
           <img [src]="point.linkImage" alt="">
         </div>
         <div fxFlex="70" class="linkMetaData">
@@ -72,7 +72,9 @@
     </a>
     <!-- No link -->
     <span *ngIf="!point.linkAddress">{{ point.linkText }}</span>
-    <span *ngIf="!point.showLinkBeforeVote && point.pointFeedback.supportLevelID === PointSupportLevels.None && justUpdated" class="preview">Preview for owner as just updated</span>
+    <span
+      *ngIf="!point.showLinkBeforeVote && point.pointFeedback.supportLevelID === PointSupportLevels.None && justUpdated"
+      class="preview">Preview for owner as just updated</span>
   </div>
 
   <div class="fv-error" *ngIf="!!error">

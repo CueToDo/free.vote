@@ -1,25 +1,25 @@
 // Angular
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 // Models, enums
 import { PointSortTypes } from 'src/app/models/enums';
 import { ID } from 'src/app/models/common';
-import { Question, QuestionSelectionResult } from 'src/app/models/question.model';
+import {
+  Question,
+  QuestionSelectionResult
+} from 'src/app/models/question.model';
 import { FilterCriteria } from 'src/app/models/filterCriteria.model';
 
 // Services
 import { AppDataService } from 'src/app/services/app-data.service';
 import { QuestionsService } from 'src/app/services/questions.service';
 
-
-
 @Component({
   selector: 'app-questions-list',
   templateUrl: './questions-list.component.html',
   styleUrls: ['./questions-list.component.css']
 })
-export class QuestionsListComponent implements OnInit {
-
+export class QuestionsListComponent {
   @Input() public filter!: FilterCriteria;
 
   public questions: Question[] = [];
@@ -29,7 +29,6 @@ export class QuestionsListComponent implements OnInit {
   public error = '';
   public alreadyFetchingFromDB = false;
   public allQuestionsDisplayed = false;
-
 
   private get lastBatchRow(): number {
     let lastRow = 0;
@@ -44,49 +43,47 @@ export class QuestionsListComponent implements OnInit {
     if (this.questions && this.questions.length > 0) {
       lastRow = this.questions[this.questions.length - 1].rowNumber;
     }
-    if (this.questions.length > lastRow) { lastRow = this.questions.length; } // Defensive if point count from databsae is wrong
+    if (this.questions.length > lastRow) {
+      lastRow = this.questions.length;
+    } // Defensive if point count from databsae is wrong
     return lastRow;
   }
 
   public nextPageQuestionsCount(): number {
-    return this.IDs
-      .filter(val => val.rowNumber > this.lastPageRow)
-      .slice(0, 10).length;
+    return this.IDs.filter(val => val.rowNumber > this.lastPageRow).slice(0, 10)
+      .length;
   }
-
 
   constructor(
     private questionsService: QuestionsService,
     public appData: AppDataService
-  ) { }
-
-  ngOnInit(): void {
-  }
+  ) {}
 
   SelectQuestions(): void {
-
     if (!this.alreadyFetchingFromDB) {
-
       this.alreadyFetchingFromDB = true;
       this.questionCount = 0;
       this.questions = [];
       this.error = '';
 
       // Infinite Scroll: Get questions in batches
-      this.questionsService.GetFirstBatchForTag(this.filter.slashTag, this.filter.sortType, this.filter.sortAscending)
-        .subscribe(
-          {
-            next: psr => this.DisplayQuestions(psr),
-            error: err => {
-              this.error = err.error.detail;
-              this.alreadyFetchingFromDB = false;
-            }
-          });
+      this.questionsService
+        .GetFirstBatchForTag(
+          this.filter.slashTag,
+          this.filter.sortType,
+          this.filter.sortAscending
+        )
+        .subscribe({
+          next: psr => this.DisplayQuestions(psr),
+          error: err => {
+            this.error = err.error.detail;
+            this.alreadyFetchingFromDB = false;
+          }
+        });
     }
   }
 
   newSortType(pointSortType: PointSortTypes): void {
-
     if (this.questionCount > 1) {
       // Don't go to server to re-sort if only 1 point selected
 
@@ -95,21 +92,20 @@ export class QuestionsListComponent implements OnInit {
       this.filter.sortType = pointSortType;
       this.alreadyFetchingFromDB = true;
 
-      this.questionsService.NewQuestionSelectionOrder(pointSortType, reversalOnly)
-        .subscribe(
-          response => {
-            this.alreadyFetchingFromDB = false;
+      this.questionsService
+        .NewQuestionSelectionOrder(pointSortType, reversalOnly)
+        .subscribe(response => {
+          this.alreadyFetchingFromDB = false;
 
-            // pointCount is not updated for re-ordering
-            this.IDs = response.questionIDs;
-            this.questions = response.questions;
-            this.NewQuestionsDisplayed();
-          });
+          // pointCount is not updated for re-ordering
+          this.IDs = response.questionIDs;
+          this.questions = response.questions;
+          this.NewQuestionsDisplayed();
+        });
     }
   }
 
   DisplayQuestions(qsr: QuestionSelectionResult): void {
-
     this.alreadyFetchingFromDB = false;
 
     // Batch
@@ -118,26 +114,22 @@ export class QuestionsListComponent implements OnInit {
     this.questions = qsr.questions;
 
     this.NewQuestionsDisplayed();
-
   }
 
   // https://stackblitz.com/edit/free-vote-infinite-scroll
   fetchMoreQuestions(): void {
-
     if (!this.alreadyFetchingFromDB) {
-
       // ToDo infinite scroll for MyPoints this.SelectedPoints();
 
       // https://stackoverflow.com/questions/38824349/how-to-convert-an-object-to-an-array-of-key-value-pairs-in-javascript
       // Construct array of next 10 points ids to be selected
-      const pids: ID[] = this.IDs
-        .filter(val => val.rowNumber > this.lastPageRow)
-        .slice(0, 10); // excludes end index;
+      const pids: ID[] = this.IDs.filter(
+        val => val.rowNumber > this.lastPageRow
+      ).slice(0, 10); // excludes end index;
 
       // Pass back next 10 PointIDs to be fetched for display
       // already filtered above - this is what we need to fetch now
       if (pids && pids.length > 0) {
-
         // Get new PAGE of points
         this.alreadyFetchingFromDB = true;
         this.allQuestionsDisplayed = false;
@@ -146,8 +138,10 @@ export class QuestionsListComponent implements OnInit {
           this.questions = this.questions.concat(response.questions);
           this.NewQuestionsDisplayed();
         });
-
-      } else if (this.lastBatchRow < this.questionCount && this.lastPageRow < this.questionCount) {
+      } else if (
+        this.lastBatchRow < this.questionCount &&
+        this.lastPageRow < this.questionCount
+      ) {
         // More defensive coding if DB givesd incorrect page count
 
         // Get another BATCH of points
@@ -155,25 +149,22 @@ export class QuestionsListComponent implements OnInit {
         this.alreadyFetchingFromDB = true;
         this.allQuestionsDisplayed = false;
 
-        this.questionsService.GetNextBatch(this.filter.sortType, this.lastBatchRow + 1)
-          .subscribe(
-            response => {
-
-              // New Batch
-              this.IDs = response.questionIDs;
-              this.questions = this.questions.concat(response.questions);
-              this.NewQuestionsDisplayed();
-            }
-          );
+        this.questionsService
+          .GetNextBatch(this.filter.sortType, this.lastBatchRow + 1)
+          .subscribe(response => {
+            // New Batch
+            this.IDs = response.questionIDs;
+            this.questions = this.questions.concat(response.questions);
+            this.NewQuestionsDisplayed();
+          });
         // }
-
       }
     }
   }
 
   NewQuestionsDisplayed(): void {
     this.alreadyFetchingFromDB = false;
-    this.allQuestionsDisplayed = (this.questions.length >= this.questionCount);
+    this.allQuestionsDisplayed = this.questions.length >= this.questionCount;
     this.appData.PointsSelected$.next();
   }
 
@@ -187,5 +178,4 @@ export class QuestionsListComponent implements OnInit {
     this.questionCount--; // decrement before calling NewPointsDisplayed which updates allPointsDisplayed
     this.NewQuestionsDisplayed();
   }
-
 }

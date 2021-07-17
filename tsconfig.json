@@ -14,11 +14,13 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2017",
     "types": [
       "node"
     ],
-    "typeRoots": [ "../node_modules/@types" ],
+    "typeRoots": [
+      "../node_modules/@types"
+    ],
     "module": "es2020",
     "lib": [
       "es2018",
@@ -26,10 +28,12 @@
     ]
   },
   "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "fullTemplateTypeCheck": false,
-    "strictTemplates": false,
-    "types": [ "node" ]
+    "strictTemplates": true,
+    "types": [
+      "node"
+    ]
   }
 }

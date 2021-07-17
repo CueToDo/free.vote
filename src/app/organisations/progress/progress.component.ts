@@ -1,6 +1,5 @@
-
 // Angular
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, EventEmitter, Output, Input } from '@angular/core';
 
 // Models, Enums
 import { Group } from 'src/app/models/group.model';
@@ -11,8 +10,7 @@ import { IssueStatuses, ProposalStatuses } from '../../models/enums';
   templateUrl: './progress.component.html',
   styleUrls: ['./progress.component.css']
 })
-export class ProgressComponent implements OnInit {
-
+export class ProgressComponent {
   @Input() Group = new Group();
   @Input() issueStatusID = IssueStatuses.None;
   @Input() proposalStatusID = ProposalStatuses.None;
@@ -23,13 +21,10 @@ export class ProgressComponent implements OnInit {
   @Input() NewIssue = false;
   @Output() NewIssueRequest = new EventEmitter();
 
-  constructor() { }
+  constructor() {}
 
   public IssueStatuses = IssueStatuses;
   public ProposalStatuses = ProposalStatuses;
-
-  ngOnInit(): void {
-  }
 
   setIssueStatus(issueStatusID: IssueStatuses): void {
     // Check if in middle of entering new issue
@@ -40,7 +35,12 @@ export class ProgressComponent implements OnInit {
       this.NewIssue = false;
     } else {
       this.NewIssue = true;
-      console.log('(Issue) Stay on new issue', this.issueStatusID, this.proposalStatusID, Date.now());
+      console.log(
+        '(Issue) Stay on new issue',
+        this.issueStatusID,
+        this.proposalStatusID,
+        Date.now()
+      );
     }
   }
 
@@ -54,12 +54,16 @@ export class ProgressComponent implements OnInit {
       this.NewIssue = false;
     } else {
       this.NewIssue = true;
-      console.log('(Proposal) Stay on new issie', this.issueStatusID, this.proposalStatusID, Date.now());
+      console.log(
+        '(Proposal) Stay on new issie',
+        this.issueStatusID,
+        this.proposalStatusID,
+        Date.now()
+      );
     }
   }
 
   newIssue(): void {
-
     this.NewIssue = true;
 
     this.issueStatusID = IssueStatuses.None;
@@ -71,7 +75,6 @@ export class ProgressComponent implements OnInit {
   }
 
   confirmCancelNew(): boolean {
-
     let proceed = !this.NewIssue;
 
     if (!proceed) {
@@ -80,6 +83,4 @@ export class ProgressComponent implements OnInit {
 
     return proceed;
   }
-
-
 }

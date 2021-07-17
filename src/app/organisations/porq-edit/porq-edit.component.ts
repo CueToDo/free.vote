@@ -1,4 +1,3 @@
-
 // Angular
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
@@ -22,7 +21,6 @@ import { PsandQsService } from '../../services/psandqs.service';
   styleUrls: ['./porq-edit.component.css']
 })
 export class PorqEditComponent implements OnInit {
-
   @Output() CancelEdit = new EventEmitter();
   @Output() CompleteEdit = new EventEmitter();
 
@@ -40,32 +38,26 @@ export class PorqEditComponent implements OnInit {
   constructor(
     private PsAndQs: PsandQsService,
     public appData: AppDataService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.porQEdit = cloneDeep(this.porQ);
   }
 
-  onCKEBlur(): void {
-
-  }
+  onCKEBlur(): void {}
 
   onSubmit(): void {
-
     if (!this.porQEdit) {
       this.error = 'Nothing to update';
     } else {
-      this.PsAndQs.PorQUpdate(this.porQEdit).subscribe(
-        {
-          next: _ => this.CompleteEdit.emit(this.porQEdit),
-          error: serverError => this.error = serverError.error.detail
-        }
-      );
+      this.PsAndQs.PorQUpdate(this.porQEdit).subscribe({
+        next: _ => this.CompleteEdit.emit(this.porQEdit),
+        error: serverError => (this.error = serverError.error.detail)
+      });
     }
   }
 
   cancel(): void {
     this.CancelEdit.emit();
   }
-
 }

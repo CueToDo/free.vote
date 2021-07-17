@@ -16,8 +16,9 @@
     slash tags
 </button>
 
-<button mat-button routerLink="/organisations/membership" routerLinkActive="active" [class.selected]="tabSelected==='organisations'"
-    [class.burgerButton]="showBurger" (click)="tabSelected='organisations'" matTooltip="groups" *ngIf="loggedInToAuth0">
+<button mat-button routerLink="/organisations/membership" routerLinkActive="active"
+    [class.selected]="tabSelected==='organisations'" [class.burgerButton]="showBurger"
+    (click)="tabSelected='organisations'" matTooltip="groups" *ngIf="loggedInToAuth0">
     <mat-icon>people</mat-icon>
     groups
 </button>

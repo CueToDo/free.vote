@@ -19,17 +19,28 @@ import { PagePreviewMetaData } from '../models/point.model';
 import { HttpService } from './http.service';
 import { LocalDataService } from './local-data.service';
 
-
 @Injectable({ providedIn: 'root' })
 export class AppDataService {
-
   // http://jasonwatmore.com/post/2016/12/01/angular-2-communicating-between-components-with-observable-subject
   public Route = '';
 
   // Can I make a function available in every controller in angular?
   // https://stackoverflow.com/questions/15025979/can-i-make-a-function-available-in-every-controller-in-angular
   // 0 to 11
-  months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
 
   // tslint:disable-next-line: deprecation
   public promptEvent: BeforeInstallPromptEvent | undefined;
@@ -40,7 +51,7 @@ export class AppDataService {
   public PagePreview$ = new Subject<PagePreviewMetaData>(); // SSR Universal PagePreview
   public RouteParamChange$ = new Subject<string>(); // next url with route parameters
   public PageName$ = new Subject<string>();
-  public TagsPointsActive$ = new Subject<boolean>();   // Point Selection
+  public TagsPointsActive$ = new Subject<boolean>(); // Point Selection
   public ShowPointsTab$ = new Subject();
   public ReSelectPoints$ = new Subject<PointSortTypes>();
   public PointsSelected$ = new Subject();
@@ -79,7 +90,8 @@ export class AppDataService {
   public porQTypes = [
     { key: 'Proposal', value: 1 },
     { key: 'Question', value: 2 },
-    { key: 'Perspective', value: 3 }] as Kvp[];
+    { key: 'Perspective', value: 3 }
+  ] as Kvp[];
 
   // Lookup - could add more
   private pointTypes: Kvp[] = [];
@@ -89,12 +101,10 @@ export class AppDataService {
     if (!!this.pointTypes && this.pointTypes.length > 0) {
       return of(this.pointTypes);
     } else {
-      return this.httpService
-        .get('lookups/point-types')
-        .pipe(
-          map(types => types as Kvp[]),
-          tap(types => this.pointTypes = types)
-        );
+      return this.httpService.get('lookups/point-types').pipe(
+        map(types => types as Kvp[]),
+        tap(types => (this.pointTypes = types))
+      );
     }
   }
 
@@ -103,11 +113,10 @@ export class AppDataService {
     if (this.extents) {
       return of(this.extents);
     } else {
-      return this.httpService.get('lookups/geographicalExtents')
-        .pipe(
-          map(value => value as Kvp[]),
-          tap(extents => this.extents = extents)
-        );
+      return this.httpService.get('lookups/geographicalExtents').pipe(
+        map(value => value as Kvp[]),
+        tap(extents => (this.extents = extents))
+      );
     }
   }
 
@@ -117,16 +126,12 @@ export class AppDataService {
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: object
   ) {
-
     // PWA installation - browser only
     if (isPlatformBrowser(this.platformId)) {
-
       // PWA https://love2dev.com/blog/beforeinstallprompt/
       window.addEventListener('beforeinstallprompt', event => {
-
         // tslint:disable-next-line: deprecation
         this.promptEvent = event as BeforeInstallPromptEvent;
-
       });
     }
   }
@@ -136,9 +141,12 @@ export class AppDataService {
   public UDF(date: Date): string {
     let udf = '';
     if (date) {
-      udf = date.getDate().toString()
-        + ' ' + this.months[date.getMonth()]
-        + ' ' + date.getFullYear().toString();
+      udf =
+        date.getDate().toString() +
+        ' ' +
+        this.months[date.getMonth()] +
+        ' ' +
+        date.getFullYear().toString();
     }
     return udf;
   }
@@ -147,11 +155,16 @@ export class AppDataService {
   public UDTF(date: Date): string {
     let udtf = '';
     if (date) {
-      udtf = date.getDate().toString()
-        + ' ' + this.months[date.getMonth()]
-        + ' ' + date.getFullYear().toString()
-        + ' ' + date.getHours().toString().padStart(2, '0')
-        + ':' + date.getMinutes().toString().padStart(2, '0');
+      udtf =
+        date.getDate().toString() +
+        ' ' +
+        this.months[date.getMonth()] +
+        ' ' +
+        date.getFullYear().toString() +
+        ' ' +
+        date.getHours().toString().padStart(2, '0') +
+        ':' +
+        date.getMinutes().toString().padStart(2, '0');
     }
     return udtf;
   }
@@ -170,34 +183,95 @@ export class AppDataService {
 
   // Name cannot include reserved characters
   isUrlNameUnSafe(input: string): boolean {
-    return input.includes('\\') || input.includes('-') /* hyphen not allowed as spaces will be represented by hyphens */
-      || input.includes('?') || input.includes('!')
-      || input.includes(`'`) || input.includes(`,`)
-      || input.includes(':') || input.includes(';')
-      || input.includes('*') || input.includes('/')
-      || input.includes('+') || input.includes('=')
-      || input.includes('@') || input.includes('&')
-      || input.includes('#') || input.includes('$');
+    return (
+      input.includes('\\') ||
+      input.includes(
+        '-'
+      ) /* hyphen not allowed as spaces will be represented by hyphens */ ||
+      input.includes('?') ||
+      input.includes('!') ||
+      input.includes(`'`) ||
+      input.includes(`,`) ||
+      input.includes(':') ||
+      input.includes(';') ||
+      input.includes('*') ||
+      input.includes('/') ||
+      input.includes('+') ||
+      input.includes('=') ||
+      input.includes('@') ||
+      input.includes('&') ||
+      input.includes('#') ||
+      input.includes('$')
+    );
   }
 
   urlSafeName(input: string): string {
-
-    let output = input.split('\\').filter(item => item).join(''); // no back-slashes
-    output = output.split('-').filter(item => item).join(' '); /* hyphen not allowed as spaces will be represented by hyphens */
-    output = output.split('?').filter(item => item).join('');
-    output = output.split('!').filter(item => item).join('');
-    output = output.split(`'`).filter(item => item).join('');
-    output = output.split(',').filter(item => item).join('');
-    output = output.split(':').filter(item => item).join('');
-    output = output.split(';').filter(item => item).join('');
-    output = output.split('*').filter(item => item).join('');
-    output = output.split('/').filter(item => item).join('');
-    output = output.split('+').filter(item => item).join('');
-    output = output.split('=').filter(item => item).join('');
-    output = output.split('@').filter(item => item).join('');
-    output = output.split('&').filter(item => item).join('');
-    output = output.split('#').filter(item => item).join('');
-    output = output.split('$').filter(item => item).join('');
+    let output = input
+      .split('\\')
+      .filter(item => item)
+      .join(''); // no back-slashes
+    output = output
+      .split('-')
+      .filter(item => item)
+      .join(
+        ' '
+      ); /* hyphen not allowed as spaces will be represented by hyphens */
+    output = output
+      .split('?')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('!')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split(`'`)
+      .filter(item => item)
+      .join('');
+    output = output
+      .split(',')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split(':')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split(';')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('*')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('/')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('+')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('=')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('@')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('&')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('#')
+      .filter(item => item)
+      .join('');
+    output = output
+      .split('$')
+      .filter(item => item)
+      .join('');
 
     return output;
   }
@@ -208,24 +282,38 @@ export class AppDataService {
     // filter - an empty string evaluates to boolean false. It works with all falsy values like 0, false, null, undefined
     let output = '';
     if (input) {
-      input.split(' ').filter(item => item).join('-'); // remove double spaces, replace spaces with dash
-      output = output.split('-').filter(item => item).join('-'); // remove double-dashes, no dash start or end
+      input
+        .split(' ')
+        .filter(item => item)
+        .join('-'); // remove double spaces, replace spaces with dash
+      output = output
+        .split('-')
+        .filter(item => item)
+        .join('-'); // remove double-dashes, no dash start or end
       output = encodeURIComponent(output);
     }
     return output;
   }
 
   unKebabUri(input: string): string {
-    return (input?.split('-').filter(item => item).join(' '));
+    return input
+      ?.split('-')
+      .filter(item => item)
+      .join(' ');
   }
 
   public removeBookEnds(withEnds: string, removeEnd: string): string {
     // filter - an empty string evaluates to boolean false. It works with all falsy values like 0, false, null, undefined
-    return withEnds.split(removeEnd).filter(item => item).join(removeEnd);
+    return withEnds
+      .split(removeEnd)
+      .filter(item => item)
+      .join(removeEnd);
   }
 
   public Date1IsLessThanDate2(dateFrom: string, dateTo: string): boolean {
-    if (!dateFrom || !dateTo) { return false; }
+    if (!dateFrom || !dateTo) {
+      return false;
+    }
     const date1 = new Date(dateFrom);
     const date2 = new Date(dateTo);
     return date1.getTime() < date2.getTime();
@@ -236,7 +324,9 @@ export class AppDataService {
     return this.httpService.post('profile/profilesave', profile);
   }
 
-  profilePictureOptionUpdate(profilePictureOptionID: string): Observable<string> {
+  profilePictureOptionUpdate(
+    profilePictureOptionID: string
+  ): Observable<string> {
     const url = `profile/profilePictureOption/${profilePictureOptionID}`;
     return this.httpService.get(url);
   }
@@ -244,18 +334,16 @@ export class AppDataService {
   // App start only - get previous Alias and Topic Selected from Local Storage or database
   // But NOT on return from sign out
   InitialisePreviousSlashTagSelected(): void {
-
     // LocalData LoadValues (called from its constructor) handles initial set up
 
     if (!this.localData.PreviousSlashTagSelected) {
-
-      this.TagLatestActivity()
-        .subscribe({
-          next: previousSlashTagSelected => {
-            this.localData.PreviousSlashTagSelected = previousSlashTagSelected;
-          },
-          error: error => console.log('Server Error on getting trending topics', error)
-        });
+      this.TagLatestActivity().subscribe({
+        next: previousSlashTagSelected => {
+          this.localData.PreviousSlashTagSelected = previousSlashTagSelected;
+        },
+        error: error =>
+          console.log('Server Error on getting trending topics', error)
+      });
     } else if (this.localData.PreviousTopicSelected === 'SignedOut') {
       this.localData.PreviousSlashTagSelected = '';
     }
@@ -266,23 +354,19 @@ export class AppDataService {
   }
 
   InitialiseStrapline(): void {
-
     // this.localData.strapline = localStorage.getItem('strapline');
     // strapline is not saved to localStorage, just to localData (in-memory)
     // '' | null is the string 'null', not an empty string
     // string value 'null' is truthy
 
     if (!this.localData.strapline) {
-      this.httpService.get(`lookups/website-strapline/${this.localData.website}`)
-        .subscribe(
-          strapline => {
-            this.localData.strapline = strapline.value;
-          }
-        );
+      this.httpService
+        .get(`lookups/website-strapline/${this.localData.website}`)
+        .subscribe(strapline => {
+          this.localData.strapline = strapline.value;
+        });
     }
-
   }
-
 
   //   // Following not necessary on INITIALISE??
   // // BehaviourSubjects already initialised with empty topic
@@ -298,10 +382,7 @@ export class AppDataService {
   //   this.RouteParamChange$.next(this.PreviousSlashTagSelected);
   // }
 
-
-
   SetSlashTag(slashTag: string, pointSortType: PointSortTypes): void {
-
     this.localData.PreviousSlashTagSelected = slashTag;
     this.localData.ActiveAliasForFilter = '';
 
@@ -313,31 +394,28 @@ export class AppDataService {
     this.RouteParamChange$.next(slashTag); // Keep separate (this is for the App Component)
   }
 
-
   GetCountries(): Observable<Kvp[]> {
-    return this.httpService.get('lookups/countries').pipe(
-      map(value => value as Kvp[])
-    );
+    return this.httpService
+      .get('lookups/countries')
+      .pipe(map(value => value as Kvp[]));
   }
 
   GetCities(countryID: string): Observable<Kvp[]> {
-    return this.httpService.get('lookups/cities/' + countryID).pipe(
-      map(value => value as Kvp[])
-    );
+    return this.httpService
+      .get('lookups/cities/' + countryID)
+      .pipe(map(value => value as Kvp[]));
   }
 
   CountrySave(country: string): Observable<number> {
-    return this.httpService.get(`lookups/countrySave/${country}`)
-      .pipe(
-        map(value => +value)
-      );
+    return this.httpService
+      .get(`lookups/countrySave/${country}`)
+      .pipe(map(value => +value));
   }
 
   CitySave(countryID: string, city: string): Observable<number> {
-    return this.httpService.get(`lookups/citySave/${countryID}/${city}`)
-      .pipe(
-        map(value => +value)
-      );
+    return this.httpService
+      .get(`lookups/citySave/${countryID}/${city}`)
+      .pipe(map(value => +value));
   }
 
   ShowCountries(geographicalExtentID: string): boolean {
@@ -383,7 +461,6 @@ export class AppDataService {
     }
     throw new Error('Invalid map key.');
   }
-
 
   // DO NOT WORK WITH Map
   // https://stackoverflow.com/questions/48187362/how-to-iterate-using-ngfor-loop-map-containing-key-as-string-and-values-as-map-i
@@ -483,14 +560,19 @@ export class AppDataService {
   }
 
   PorQType(porQTypeID: PorQTypes): string {
-    return this.porQTypes.filter(pt => pt.value === porQTypeID as number)[0].key;
+    return this.porQTypes.filter(pt => pt.value === (porQTypeID as number))[0]
+      .key;
   }
 
   // https://stackoverflow.com/questions/52419658/efficient-way-to-get-route-parameter-in-angular
-  onNavigationEndReadParamByKey(route: ActivatedRoute, key: string): Observable<string> {
+  onNavigationEndReadParamByKey(
+    route: ActivatedRoute,
+    key: string
+  ): Observable<string> {
     return this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      mergeMap(() => { /* flatMap deprecated - is this a direct replacement? */
+      mergeMap(() => {
+        /* flatMap deprecated - is this a direct replacement? */
         return route.params.pipe(
           filter(params => params[key]),
           map(params => params[key])
@@ -509,7 +591,7 @@ export class AppDataService {
   ArrayOfKVP(source: any): Array<Kvp> {
     const output = new Array<Kvp>();
     for (const kvp of source) {
-      output.push(({ key: kvp.key, value: kvp.value }) as Kvp);
+      output.push({ key: kvp.key, value: kvp.value } as Kvp);
     }
     return output;
   }
@@ -564,5 +646,4 @@ export class AppDataService {
   //   }, {});
   //   return result as T;
   // }
-
 }

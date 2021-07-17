@@ -92,8 +92,8 @@
 
                 <!-- Group Edit -->
                 <div [ngClass]="{'show':groupEdit, 'hide':!groupEdit}">
-                    <app-group-edit *ngIf="groupEdit" (editCancelled)="editCancelled()" (editCompleted)="editCompleted()"
-                        [(group)]="group">
+                    <app-group-edit *ngIf="groupEdit" (editCancelled)="editCancelled()"
+                        (editCompleted)="editCompleted()" [(group)]="group">
                     </app-group-edit>
                 </div>
 

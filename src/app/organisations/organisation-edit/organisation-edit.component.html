@@ -3,7 +3,8 @@
     <div fxLayout="column">
 
         <mat-form-field>
-            <input matInput placeholder="organisation name" [(ngModel)]="organisation.organisationName" #groupName (keyup.enter)="nameComplete()">
+            <input matInput placeholder="organisation name" [(ngModel)]="organisation.organisationName" #groupName
+                (keyup.enter)="nameComplete()">
             <button mat-button *ngIf="organisation?.organisationName" matSuffix mat-icon-button aria-label="clear"
                 (click)="organisation.organisationName='';">
                 <mat-icon>close</mat-icon>
@@ -11,7 +12,8 @@
         </mat-form-field>
 
         <mat-form-field>
-            <input matInput placeholder="organisation description" [(ngModel)]="organisation.description" #groupDescription (keyup.enter)="descriptionComplete()">
+            <input matInput placeholder="organisation description" [(ngModel)]="organisation.description"
+                #groupDescription (keyup.enter)="descriptionComplete()">
             <button mat-button *ngIf="organisation?.description" matSuffix mat-icon-button aria-label="clear"
                 (click)="organisation.description='';">
                 <mat-icon>close</mat-icon>
@@ -19,7 +21,8 @@
         </mat-form-field>
 
         <mat-form-field>
-            <input matInput placeholder="organisation website" [(ngModel)]="organisation.organisationWebsite" #groupWebsite (keyup.enter)="websiteComplete()">
+            <input matInput placeholder="organisation website" [(ngModel)]="organisation.organisationWebsite"
+                #groupWebsite (keyup.enter)="websiteComplete()">
             <button mat-button *ngIf="organisation?.organisationWebsite" matSuffix mat-icon-button aria-label="clear"
                 (click)="organisation.organisationWebsite='';">
                 <mat-icon>close</mat-icon>
@@ -40,7 +43,7 @@
                 </mat-radio-button>
                 <mat-radio-button labelPosition="before" [value]="false">accept requests
                 </mat-radio-button>
-              </mat-radio-group>  
+            </mat-radio-group>
         </div>
 
         <div *ngIf="showCountries">

@@ -1,5 +1,13 @@
 // Angular
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
 
 // Lodash https://github.com/lodash/lodash/issues/3192
 import { cloneDeep } from 'lodash-es';
@@ -17,8 +25,7 @@ import { Group, GroupUpdate } from 'src/app/models/group.model';
   templateUrl: './group-edit.component.html',
   styleUrls: ['./group-edit.component.css']
 })
-export class GroupEditComponent implements OnInit, OnDestroy {
-
+export class GroupEditComponent implements OnInit {
   @Input() group = new Group();
   @Output() groupChange = new EventEmitter(); // Still need to emit
 
@@ -26,7 +33,9 @@ export class GroupEditComponent implements OnInit, OnDestroy {
   @Output() editCompleted = new EventEmitter();
   @Output() editCancelled = new EventEmitter();
 
-  @ViewChild('groupName', { static: true }) elSubGroupName: ElementRef | undefined;
+  @ViewChild('groupName', { static: true }) elSubGroupName:
+    | ElementRef
+    | undefined;
 
   groupCopy = new Group();
 
@@ -36,25 +45,27 @@ export class GroupEditComponent implements OnInit, OnDestroy {
   constructor(
     private appData: AppDataService,
     private groupsService: OrganisationsService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
     this.groupCopy = cloneDeep(this.group) as Group;
     this.elSubGroupName?.nativeElement.focus();
 
     if (this.group) {
       if (!this.group.groupID || this.group.groupID < 1) {
-        this.group.decisionBasisOptionID = GroupDecisionBasisOption.SimpleMajority.toString();
+        this.group.decisionBasisOptionID =
+          GroupDecisionBasisOption.SimpleMajority.toString();
       }
     }
   }
 
   superMajorityCheck(): boolean {
-
     this.error = '';
 
-    if (this.group?.decisionBasisOptionID !== GroupDecisionBasisOption.SuperMajority.toString()) {
+    if (
+      this.group?.decisionBasisOptionID !==
+      GroupDecisionBasisOption.SuperMajority.toString()
+    ) {
       return true;
     } else if (this.group.superMajority < 52 || this.group.superMajority > 99) {
       this.error = 'super majority must be a value between 52 and 99';
@@ -65,15 +76,17 @@ export class GroupEditComponent implements OnInit, OnDestroy {
   }
 
   update(): void {
-
     if (!this.group) {
       this.error = 'No group to update';
     } else {
-
       this.error = '';
 
       if (this.appData.isUrlNameUnSafe(this.group.groupName)) {
-        if (confirm('Sub Group name contains invalid characters. Remove them now?')) {
+        if (
+          confirm(
+            'Sub Group name contains invalid characters. Remove them now?'
+          )
+        ) {
           this.group.groupName = this.appData.urlSafeName(this.group.groupName);
         } else {
           return;
@@ -86,12 +99,12 @@ export class GroupEditComponent implements OnInit, OnDestroy {
       }
 
       if (this.superMajorityCheck()) {
-
         this.saving = true;
         this.error = '';
 
-        this.groupsService.GroupUpdate(this.group as any as GroupUpdate).subscribe(
-          {
+        this.groupsService
+          .GroupUpdate(this.group as any as GroupUpdate)
+          .subscribe({
             next: subGroup => {
               this.group = cloneDeep(subGroup) as Group;
               this.groupChange.emit(this.group);
@@ -101,9 +114,8 @@ export class GroupEditComponent implements OnInit, OnDestroy {
               this.error = serverError.error.detail;
               this.saving = false;
             },
-            complete: () => this.saving = false // error means complete!
-          }
-        );
+            complete: () => (this.saving = false) // error means complete!
+          });
       }
     }
   }
@@ -112,9 +124,5 @@ export class GroupEditComponent implements OnInit, OnDestroy {
     this.group = cloneDeep(this.groupCopy) as Group;
     this.groupChange.emit(this.group);
     this.editCancelled.emit();
-  }
-
-  ngOnDestroy(): void {
-
   }
 }

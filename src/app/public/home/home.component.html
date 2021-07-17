@@ -65,19 +65,19 @@
 
           <div class="form-group" fxLayout="row" fxLayoutAlign="center stretch">
 
-              <input fxFlex type="text" [(ngModel)]="slashTag" (keyup)="slashTagChanged()" (keyup.enter)="showTagPoints()"
-                (focus)="beginInput()" (blur)="endInput()" class="form-control" id="slashTagInput" #tvSlashTag
-                placeholder="/slash tag">
-            
-              <button mat-stroked-button (click)="showTagPoints()">
-                <mat-icon>search</mat-icon>
-                search
-              </button>
-            
-              <button mat-stroked-button aria-label="Clear" (click)="restartSearch()">
-                <mat-icon>close</mat-icon>
-                clear
-              </button>
+            <input fxFlex type="text" [(ngModel)]="slashTag" (keyup)="slashTagChanged()" (keyup.enter)="showTagPoints()"
+              (focus)="beginInput()" (blur)="endInput()" class="form-control" id="slashTagInput" #tvSlashTag
+              placeholder="/slash tag">
+
+            <button mat-stroked-button (click)="showTagPoints()">
+              <mat-icon>search</mat-icon>
+              search
+            </button>
+
+            <button mat-stroked-button aria-label="Clear" (click)="restartSearch()">
+              <mat-icon>close</mat-icon>
+              clear
+            </button>
 
           </div>
 

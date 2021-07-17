@@ -1,5 +1,3 @@
-
-
 // Angular
 import { Injectable } from '@angular/core';
 
@@ -10,18 +8,31 @@ import { map, tap } from 'rxjs/operators';
 // Models, Enums
 import { ID } from 'src/app/models/common';
 import { PointTypesEnum, DraftStatusFilter } from 'src/app/models/enums';
-import { PointSelectionResult, Point, PointEdit, PagePreviewMetaData } from 'src/app/models/point.model';
-import { PointFeedback, PointFeedbackFormData, PointWoWFormData } from 'src/app/models/point.model';
-import { PointSortTypes, PointSelectionTypes, PointSupportLevels, PointFlags, PointFeedbackFilter } from 'src/app/models/enums';
+import {
+  PointSelectionResult,
+  Point,
+  PointEdit,
+  PagePreviewMetaData
+} from 'src/app/models/point.model';
+import {
+  PointFeedback,
+  PointFeedbackFormData,
+  PointWoWFormData
+} from 'src/app/models/point.model';
+import {
+  PointSortTypes,
+  PointSelectionTypes,
+  PointSupportLevels,
+  PointFlags,
+  PointFeedbackFilter
+} from 'src/app/models/enums';
 
 // Services
 import { HttpService } from './http.service';
 import { AppDataService } from './app-data.service';
 
-
 @Injectable({ providedIn: 'root' })
 export class PointsService {
-
   // public PointsSelected = new Subject<any>();
   // public PointsSelectionError = new Subject<any>();
 
@@ -41,51 +52,70 @@ export class PointsService {
 
   constructor(
     private httpClientService: HttpService,
-    private appDataService: AppDataService) {
+    private appDataService: AppDataService
+  ) {
     // this.GetWoWWeekInfoVote();
   }
 
   GetFirstBatchQuestionPoints(
-    slashTag: string, questionID: number, myPointsOnly: boolean, unAttached: boolean,
-    pointSortOrder: PointSortTypes, sortAscending: boolean): Observable<PointSelectionResult> {
-
+    slashTag: string,
+    questionSlug: string,
+    myPointsOnly: boolean,
+    unAttached: boolean,
+    pointSortOrder: PointSortTypes,
+    sortAscending: boolean
+  ): Observable<PointSelectionResult> {
     const apiUrl =
-      `points/getFirstBatchQuestionPoints/${slashTag.replace('/', '')}/${questionID}/${myPointsOnly ? 'Y' : 'N'}`
-      + `/${unAttached ? 'Y' : 'N'}/${pointSortOrder}/${sortAscending}/${this.batchSize}/${this.pageSize}`;
+      `points/getFirstBatchQuestionPoints/${slashTag.replace(
+        '/',
+        ''
+      )}/${questionSlug}/${myPointsOnly ? 'Y' : 'N'}` +
+      `/${unAttached ? 'Y' : 'N'}/${pointSortOrder}/${sortAscending}/${
+        this.batchSize
+      }/${this.pageSize}`;
 
     return this.httpClientService
       .get(apiUrl)
-      .pipe(
-        map(returnData => this.CastToPointSelectionResult(returnData))
-      );
+      .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
   }
 
   // The standard selections for a Tag:
   // 1) First batch
   // 2) Subsequent batch (very similar to above, can these be consolidated?)
   // 3) Page of points for all selection methods
-  GetFirstBatchForTag(slashTag: string, pointSortOrder: PointSortTypes, sortAscending: boolean): Observable<PointSelectionResult> {
-
+  GetFirstBatchForTag(
+    slashTag: string,
+    pointSortOrder: PointSortTypes,
+    sortAscending: boolean
+  ): Observable<PointSelectionResult> {
     // No Filters + infinite scroll on DateOrder desc
     const apiUrl =
-      `points/getFirstBatchForTag/${slashTag.replace('/', '')}/${pointSortOrder}`
-      + `/${sortAscending}/${this.batchSize}/${this.pageSize}`;
+      `points/getFirstBatchForTag/${slashTag.replace(
+        '/',
+        ''
+      )}/${pointSortOrder}` +
+      `/${sortAscending}/${this.batchSize}/${this.pageSize}`;
 
     return this.httpClientService
       .get(apiUrl)
-      .pipe(
-        map(returnData => this.CastToPointSelectionResult(returnData))
-      );
+      .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
   }
-
 
   // ToDo this is what needs to change for new selection methods
   GetFirstBatchFiltered(
-    myPoints: boolean, byAlias: string, onTopic: string,
-    draftStatusFilter: DraftStatusFilter, feedbackFilter: PointFeedbackFilter, pointFlag: PointFlags, pointTextFilter: string,
-    pointTypeID: PointTypesEnum, from: Date, to: Date,
-    pointSortOrder: PointSortTypes, sortAscending: boolean): Observable<PointSelectionResult> {
-
+    myPoints: boolean,
+    byAlias: string,
+    onTopic: string,
+    draftStatusFilter: DraftStatusFilter,
+    feedbackFilter: PointFeedbackFilter,
+    pointFlag: PointFlags,
+    pointTextFilter: string,
+    pointTypeID: PointTypesEnum,
+    from: Date,
+    to: Date,
+    pointSortOrder: PointSortTypes,
+    sortAscending: boolean
+  ): Observable<PointSelectionResult> {
     const fromDate = this.appDataService.UDF(from);
     const toDate = this.appDataService.UDF(to);
 
@@ -93,22 +123,31 @@ export class PointsService {
     const apiUrl = 'points/getFirstBatchFiltered';
 
     const postData = {
-      myPoints, byAlias, onTopic,
-      draftStatusFilter, feedbackFilter,
-      pointFlag, pointTextFilter,
-      pointTypeID, fromDate, toDate,
-      pointSortOrder, sortAscending,
-      batchSize: this.batchSize, pageSize: this.pageSize
+      myPoints,
+      byAlias,
+      onTopic,
+      draftStatusFilter,
+      feedbackFilter,
+      pointFlag,
+      pointTextFilter,
+      pointTypeID,
+      fromDate,
+      toDate,
+      pointSortOrder,
+      sortAscending,
+      batchSize: this.batchSize,
+      pageSize: this.pageSize
     };
 
     return this.httpClientService
       .post(apiUrl, postData)
       .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
-
   }
 
-  GetSpecificPoint(slashTag: string, pointTitle: string): Observable<PointSelectionResult> {
-
+  GetSpecificPoint(
+    slashTag: string,
+    pointTitle: string
+  ): Observable<PointSelectionResult> {
     const apiUrl = `points/point/${slashTag}/${pointTitle}`;
 
     console.log('GET SPECIFIC', apiUrl);
@@ -119,27 +158,30 @@ export class PointsService {
   }
 
   PorQPoints(porQID: number): Observable<PointSelectionResult> {
-
     const apiUrl = `points/getFirstBatchForPorQ/${porQID}/${this.batchSize}/${this.pageSize}`;
 
     return this.httpClientService
       .get(apiUrl)
       .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
-
   }
 
-
-  NewPointSelectionOrder(pointSortOrder: PointSortTypes, reversalOnly: boolean): Observable<PointSelectionResult> {
-
-    const apiUrl = `points/pointsSelectedReOrder/${pointSortOrder}/${reversalOnly ? 'Y' : 'N'}`;
+  NewPointSelectionOrder(
+    pointSortOrder: PointSortTypes,
+    reversalOnly: boolean
+  ): Observable<PointSelectionResult> {
+    const apiUrl = `points/pointsSelectedReOrder/${pointSortOrder}/${
+      reversalOnly ? 'Y' : 'N'
+    }`;
 
     return this.httpClientService
       .get(apiUrl)
       .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
   }
 
-  GetNextBatch(pointSortOrder: PointSortTypes, fromRow: number): Observable<PointSelectionResult> {
-
+  GetNextBatch(
+    pointSortOrder: PointSortTypes,
+    fromRow: number
+  ): Observable<PointSelectionResult> {
     const apiUrl = `points/getNextBatch/${pointSortOrder}/${fromRow}/${this.batchSize}/${this.pageSize}`;
 
     return this.httpClientService
@@ -147,10 +189,8 @@ export class PointsService {
       .pipe(map(returnData => this.CastToPointSelectionResult(returnData)));
   }
 
-
   // returns a batch of points based on a list of IDs peviously returned to the client
   GetPage(pointIDs: ID[]): Observable<PointSelectionResult> {
-
     if (!pointIDs || pointIDs.length === 0) {
       console.log('No points to select');
       return of(new PointSelectionResult());
@@ -171,10 +211,7 @@ export class PointsService {
     }
   }
 
-
-
   CastToPointSelectionResult(sourceData: any): PointSelectionResult {
-
     const PSR = new PointSelectionResult();
 
     PSR.pointCount = sourceData.pointCount;
@@ -190,7 +227,6 @@ export class PointsService {
   }
 
   PointUpdate(point: PointEdit, isPorQPoint: boolean): Observable<Point> {
-
     // Input parameter is Point not PointEdit
     // construct a new PointEdit (all that's needed)
 
@@ -216,8 +252,10 @@ export class PointsService {
       .pipe(map(result => result as Point));
   }
 
-  PointSourceMetaDataUpdate(pointID: number, link: string): Observable<PagePreviewMetaData> {
-
+  PointSourceMetaDataUpdate(
+    pointID: number,
+    link: string
+  ): Observable<PagePreviewMetaData> {
     const postData = { pointID, link };
 
     return this.httpClientService
@@ -228,7 +266,6 @@ export class PointsService {
   // Not really needed: when we update an existing point,
   // we get the updated point back from the API along with YouTubeID
   YouTubeID(youTubeLink: string): Observable<string> {
-
     youTubeLink = encodeURI(youTubeLink);
 
     return this.httpClientService
@@ -236,55 +273,55 @@ export class PointsService {
       .pipe(map(result => result));
   }
 
-
   PointDelete(pointID: number): Observable<boolean> {
-
     return this.httpClientService
       .get('points/pointDelete/' + pointID)
       .pipe(map(result => result as boolean));
   }
 
   PointFeedback(
-    pointID: number, pointSupportLevel: PointSupportLevels,
-    comment: string, feedbackAnon: boolean): Observable<PointFeedback> {
-
+    pointID: number,
+    pointSupportLevel: PointSupportLevels,
+    comment: string,
+    feedbackAnon: boolean
+  ): Observable<PointFeedback> {
     const postData: PointFeedbackFormData = {
       pointID,
       pointSupportLevel,
       comment,
-      feedbackAnon,
+      feedbackAnon
     };
 
-    return this.httpClientService
-      .post('points/PointFeedback', postData)
-      .pipe(
-        tap(result => console.log('PointFeedback result:', result)),
-        map(result => result as PointFeedback)
-      );
+    return this.httpClientService.post('points/PointFeedback', postData).pipe(
+      tap(result => console.log('PointFeedback result:', result)),
+      map(result => result as PointFeedback)
+    );
   }
 
-
   PointFlag(
-    deleteFlag: boolean, pointID: number,
-    pointFlagType: PointFlags): Observable<boolean> {
-
+    deleteFlag: boolean,
+    pointID: number,
+    pointFlagType: PointFlags
+  ): Observable<boolean> {
     let apiUrl = 'points/PointFlag';
-    if (deleteFlag) { apiUrl += 'Delete'; }
+    if (deleteFlag) {
+      apiUrl += 'Delete';
+    }
 
     apiUrl += `/${pointID}/${pointFlagType}`;
 
     return this.httpClientService
       .get(apiUrl)
       .pipe(map(result => result as boolean));
-
   }
 
   PointWoWVote(pointID: number, wow: boolean): Observable<PointFeedback> {
-
     // standard construction of post data
     const postData: PointWoWFormData = {
       // 'WeekID': this.WoWWeekInfoVote.WoWWeekID, 'WeekEndingDate': this.WoWWeekInfoVote.WoWWeekEndingDate,
-      pointID, wow, feedbackAnon: this.Anon
+      pointID,
+      wow,
+      feedbackAnon: this.Anon
     };
 
     console.log('PointWoWVote postData:', postData);
@@ -295,9 +332,7 @@ export class PointsService {
       .pipe(map(result => result as PointFeedback));
     // this.WoWWeekInfoVote.WoWWeekID = pointFeedback.WoWWeekID; // always update regardless
     // this.WoWWeekInfoVote.WoWWeekEndingDate = pointFeedback.WoWWeekEndingDate; // always update regardless
-
   }
-
 
   // SelectedPoints(pageNumber: number): Promise<PointSelectionResult> {
 
@@ -314,7 +349,6 @@ export class PointsService {
   //       return returnData as PointSelectionResult;
   //     });
   // }
-
 
   // GetNextBatchForTagID(tagID: number, sortRevision: number, pointCount: number,
   //   mostRecentFirst: boolean, fromRow: number): Promise<PointSelectionResult> {
@@ -338,7 +372,6 @@ export class PointsService {
   //       return PSR;
   //     });
   // }
-
 
   // Service Returns Full PointFeedback for just the WoWWeekID and WoWWeekEndingDate to be saved in WoWWeekInfoVote
   // GetWoWWeekInfoVote(): Promise<WoWWeekInfoVote> {

@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 // Models
@@ -9,28 +9,19 @@ import { Point } from 'src/app/models/point.model';
 // Services
 import { AppDataService } from 'src/app/services/app-data.service';
 
-
 @Component({
   selector: 'app-points-menu',
   templateUrl: './voters-menu.component.html'
   // styleUrls: ['./voters-menu.component.css']
 })
-export class VotersMenuComponent implements OnInit {
-
+export class VotersMenuComponent {
   selectedIndex = 0;
   PointSelectionTypes = PointSelectionTypes;
   PointFlags = PointFlags;
 
   point = new Point();
 
-  constructor(private router: Router, private appDataService: AppDataService) { }
+  constructor(private router: Router, private appDataService: AppDataService) {}
 
-  newTopic(summat: Event): void {
-
-  }
-
-  ngOnInit(): void {
-
-  }
-
+  newTopic(summat: Event): void {}
 }

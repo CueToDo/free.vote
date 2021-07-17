@@ -49,11 +49,11 @@
             </div>
 
             <img
-              *ngIf="localData.freeVoteProfile.profilePictureOptionID=='1' && localData.auth0Profile && localData.auth0Profile.picture"
+              *ngIf="localData.freeVoteProfile.profilePictureOptionID==='1' && localData.auth0Profile && localData.auth0Profile.picture"
               [src]="localData.auth0Profile.picture" alt="profile picture">
 
             <img
-              *ngIf="localData.freeVoteProfile.profilePictureOptionID=='2' && localData.freeVoteProfile.profilePicture"
+              *ngIf="localData.freeVoteProfile.profilePictureOptionID==='2' && localData.freeVoteProfile.profilePicture"
               [src]="localData.freeVoteProfile.profilePicture" alt="profile picture">
 
           </div>

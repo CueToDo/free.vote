@@ -2,7 +2,7 @@
 
     <div class="content">
 
-        <div *ngIf="error!=''" class="text-danger mx-3">
+        <div *ngIf="error!==''" class="text-danger mx-3">
             {{ error }}
         </div>
 
@@ -25,8 +25,9 @@
         <div class="questionCount">
 
             <span *ngIf="!alreadyFetchingFromDB && !filter.single">
-                {{ questions.length }} question{{ appData.plural(questions.length) }} displayed of {{ questionCount }}<span
-                    *ngIf="!allQuestionsDisplayed"> <a *ngIf="questions.length < questionCount" routerLink="." (click)="fetchMoreQuestions()">more</a></span>
+                {{ questions.length }} question{{ appData.plural(questions.length) }} displayed of {{ questionCount
+                }}<span *ngIf="!allQuestionsDisplayed"> <a *ngIf="questions.length < questionCount" routerLink="."
+                        (click)="fetchMoreQuestions()">more</a></span>
             </span>
 
             <span *ngIf="filter.single">

@@ -2,7 +2,7 @@
 
     <div class="content">
 
-        <div *ngIf="error!=''" class="text-danger mx-3">
+        <div *ngIf="error!==''" class="text-danger mx-3">
             {{ error }}
         </div>
 
@@ -16,7 +16,7 @@
 
         <!-- Points List -->
         <div *ngFor="let point of points">
-            <app-point [point]="point" [pointCount]="pointCount" (PointDeleted)="onPointDeleted($event)" 
+            <app-point [point]="point" [pointCount]="pointCount" (PointDeleted)="onPointDeleted($event)"
                 [possibleAnswer]="possibleAnswers" [isMyAnswer]="attachedToQuestion && point.isPointOwner"
                 (AddPointToAnswers)="AddToAnswers($event)" (RemovePointFromAnswers)="RemoveFromAnswers($event)">
             </app-point>

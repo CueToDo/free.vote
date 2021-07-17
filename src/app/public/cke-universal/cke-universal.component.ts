@@ -1,4 +1,12 @@
-import { Component, OnInit, Inject, Renderer2, PLATFORM_ID, Input, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  Renderer2,
+  PLATFORM_ID,
+  Input,
+  EventEmitter
+} from '@angular/core';
 import { isPlatformServer, isPlatformBrowser, DOCUMENT } from '@angular/common';
 import { Output } from '@angular/core';
 
@@ -8,7 +16,6 @@ import { Output } from '@angular/core';
   styleUrls: ['./cke-universal.component.css']
 })
 export class CkeUniversalComponent implements OnInit {
-
   // https://www.lavalamp.biz/blogs/how-to-use-ckeditor-5-in-angular-with-server-side-rendering-support/
   // https://stackoverflow.com/questions/62076412/angular-universal-ckeditor5-window-is-not-defined
 
@@ -17,13 +24,31 @@ export class CkeUniversalComponent implements OnInit {
 
   public ckeConfig = {
     toolbar: {
-      items: ['Bold', 'Italic', 'Underline',
-        '|', 'bulletedList', 'numberedList',
-        '|', 'indent', 'outdent',
-        '|', 'heading', 'fontSize',
-        '|', 'fontColor', 'fontBackgroundColor',
-        '|', 'link', 'image', 'insertTable', 'horizontalLine',
-        '|', 'undo', 'redo'],
+      items: [
+        'Bold',
+        'Italic',
+        'Underline',
+        '|',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'indent',
+        'outdent',
+        '|',
+        'heading',
+        'fontSize',
+        '|',
+        'fontColor',
+        'fontBackgroundColor',
+        '|',
+        'link',
+        'image',
+        'insertTable',
+        'horizontalLine',
+        '|',
+        'undo',
+        'redo'
+      ],
       shouldNotGroupWhenFull: true
     },
     // htmlEncodeOutput: false
@@ -33,9 +58,8 @@ export class CkeUniversalComponent implements OnInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private htmlDocument: HTMLDocument,
-    private renderer2: Renderer2,
-  ) {
-  }
+    private renderer2: Renderer2
+  ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -46,7 +70,6 @@ export class CkeUniversalComponent implements OnInit {
   }
 
   loadCkEditor(): void {
-
     // Append script to document body
 
     const script = this.renderer2.createElement('script');
@@ -59,17 +82,18 @@ export class CkeUniversalComponent implements OnInit {
 
     script.text = `
     ${(script.onload = async () => {
+      const CKEditor = (window as any).ClassicEditor;
 
-        const CKEditor = (window as any).ClassicEditor;
+      const editor = await CKEditor.create(
+        document.querySelector('#editor'),
+        this.ckeConfig
+      );
 
-        const editor = await CKEditor.create(
-          document.querySelector('#editor'), this.ckeConfig);
-
-        editor.model.document.on('change', () => {
-          this.textToEdit = JSON.stringify(editor.getData());
-          this.textToEditChange.emit(editor.getData());
-        });
-      })}
+      editor.model.document.on('change', () => {
+        this.textToEdit = JSON.stringify(editor.getData());
+        this.textToEditChange.emit(editor.getData());
+      });
+    })}
     `;
 
     this.renderer2.appendChild(this.htmlDocument.body, script);

@@ -1,5 +1,4 @@
-<div class="porQ py-2 mb-3" *ngIf="!deleted && !editing" [routerLink]="detailsLink"
-    [ngClass]="{
+<div class="porQ py-2 mb-3" *ngIf="!deleted && !editing" [routerLink]="detailsLink" [ngClass]="{
         'Questions': !inFocus && porQ.porQTypeID === PorQTypes.Question,
         'Perspectives': !inFocus && porQ.porQTypeID === PorQTypes.Perspective,
         'Proposals': !inFocus && porQ.porQTypeID === PorQTypes.Proposal,
@@ -32,7 +31,8 @@
         </div>
 
         <div class="smaller tar">
-            <strong>{{ porQ.points }}</strong> points, <strong>{{ porQ.feedback }}</strong> feedback, <strong>{{ porQ.voteCount }}</strong> votes.
+            <strong>{{ porQ.points }}</strong> points, <strong>{{ porQ.feedback }}</strong> feedback, <strong>{{
+                porQ.voteCount }}</strong> votes.
         </div>
 
         <div class="smaller tar" *ngIf="porQ.porQTypeID!==PorQTypes.Question">
